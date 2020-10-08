@@ -66,7 +66,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     }
 
 	// Initialize the world matrix
-	XMStoreFloat4x4(&_world, XMMatrixIdentity());
+    for (int i = 0; i < 4; i++)
+    {
+        XMFLOAT4X4 world;
+
+        XMStoreFloat4x4(&world, XMMatrixIdentity());
+
+        _worldMatrices.push_back(world);
+    }
 
     // Initialize the view matrix
 	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, -3.0f, 0.0f);
@@ -439,8 +446,16 @@ void Application::Update()
     //
     // Animate the cube
     //
-	XMStoreFloat4x4(&_world, XMMatrixRotationZ(t));
-	XMStoreFloat4x4(&_world, XMMatrixRotationY(t));
+    
+    for (int i = 0; i < 4; i++)
+    {
+        XMMATRIX rotated = XMMatrixIdentity();
+        rotated = XMMatrixMultiply(rotated, XMMatrixRotationX(t * i));
+        rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t));
+        rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(i, i, i*2));
+
+        XMStoreFloat4x4(&_worldMatrices[i], rotated);
+    }
 }
 
 void Application::Draw()
@@ -451,30 +466,34 @@ void Application::Draw()
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
 
-	XMMATRIX world = XMLoadFloat4x4(&_world);
-	XMMATRIX view = XMLoadFloat4x4(&_view);
-	XMMATRIX projection = XMLoadFloat4x4(&_projection);
-    //
-    // Update variables
-    //
-    ConstantBuffer cb;
-	cb.mWorld = XMMatrixTranspose(world);
-	cb.mView = XMMatrixTranspose(view);
-	cb.mProjection = XMMatrixTranspose(projection);
+    for (int i = 0; i < 4; i++)
+    {
 
-	_pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
+        XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
+        XMMATRIX view = XMLoadFloat4x4(&_view);
+        XMMATRIX projection = XMLoadFloat4x4(&_projection);
+        //
+        // Update variables
+        //
+        ConstantBuffer cb;
+        cb.mWorld = XMMatrixTranspose(world);
+        cb.mView = XMMatrixTranspose(view);
+        cb.mProjection = XMMatrixTranspose(projection);
 
-    //
-    // Renders a triangle
-    //
-	_pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
-	_pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
-    _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
-	_pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
-	_pImmediateContext->DrawIndexed(36, 0, 0);        
+        _pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
 
+        //
+        // Renders a triangle
+        //
+        _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
+        _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
+        _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
+        _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
+        _pImmediateContext->DrawIndexed(36, 0, 0);
+    }
     //
     // Present our back buffer to our front buffer
     //
     _pSwapChain->Present(0, 0);
+
 }

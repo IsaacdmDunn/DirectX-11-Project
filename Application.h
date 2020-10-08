@@ -6,6 +6,7 @@
 #include <directxmath.h>
 #include <directxcolors.h>
 #include "resource.h"
+#include <vector>
 
 using namespace DirectX;
 
@@ -40,8 +41,12 @@ private:
 	ID3D11Buffer*           _pIndexBuffer;
 	ID3D11Buffer*           _pConstantBuffer;
 	XMFLOAT4X4              _world;
+	std::vector<XMFLOAT4X4> _worldMatrices;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
+	ID3D11DepthStencilView* _depthStencilView;
+	ID3D11Texture2D* _depthStencilBuffer;
+
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

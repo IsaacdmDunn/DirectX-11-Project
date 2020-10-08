@@ -1,2 +1,5 @@
 ﻿  Application.cpp
+C:\Users\ganda\Downloads\DX11 Framework 2020\DX11 Framework 2018\Application.cpp(455,72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Downloads\DX11 Framework 2020\DX11 Framework 2018\Application.cpp(455,68): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Downloads\DX11 Framework 2020\DX11 Framework 2018\Application.cpp(455,65): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   DX11 Framework.vcxproj -> C:\Users\ganda\Downloads\DX11 Framework 2020\DX11 Framework 2018\Debug\DX11 Framework.exe
