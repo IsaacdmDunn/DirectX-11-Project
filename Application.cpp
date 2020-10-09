@@ -66,7 +66,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     }
 
 	// Initialize the world matrix
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 8; i++)
     {
         XMFLOAT4X4 world;
 
@@ -76,9 +76,9 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     }
 
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, -3.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -18.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.3f, 1.0f, 0.0f, 0.0f);
 
 	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(Eye, At, Up));
 
@@ -298,6 +298,21 @@ HRESULT Application::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoin
 
 HRESULT Application::InitDevice()
 {
+    D3D11_TEXTURE2D_DESC depthStencilDesc;
+
+    depthStencilDesc.Width = _WindowWidth;
+    depthStencilDesc.Height = _WindowHeight;
+    depthStencilDesc.MipLevels = 1;
+    depthStencilDesc.ArraySize = 1;
+    depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthStencilDesc.SampleDesc.Count = 1;
+    depthStencilDesc.SampleDesc.Quality = 0;
+    depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+    depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    depthStencilDesc.CPUAccessFlags = 0;
+    depthStencilDesc.MiscFlags = 0;
+
+
     HRESULT hr = S_OK;
 
     UINT createDeviceFlags = 0;
@@ -346,7 +361,7 @@ HRESULT Application::InitDevice()
         if (SUCCEEDED(hr))
             break;
     }
-
+    
     if (FAILED(hr))
         return hr;
 
@@ -363,7 +378,11 @@ HRESULT Application::InitDevice()
     if (FAILED(hr))
         return hr;
 
-    _pImmediateContext->OMSetRenderTargets(1, &_pRenderTargetView, nullptr);
+    _pd3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, &_depthStencilBuffer);
+    _pd3dDevice->CreateDepthStencilView(_depthStencilBuffer, nullptr, &_depthStencilView);
+
+
+    _pImmediateContext->OMSetRenderTargets(1, &_pRenderTargetView, _depthStencilView);
 
     // Setup the viewport
     D3D11_VIEWPORT vp;
@@ -401,6 +420,8 @@ HRESULT Application::InitDevice()
 	bd.CPUAccessFlags = 0;
     hr = _pd3dDevice->CreateBuffer(&bd, nullptr, &_pConstantBuffer);
 
+    
+
     if (FAILED(hr))
         return hr;
 
@@ -421,6 +442,10 @@ void Application::Cleanup()
     if (_pSwapChain) _pSwapChain->Release();
     if (_pImmediateContext) _pImmediateContext->Release();
     if (_pd3dDevice) _pd3dDevice->Release();
+
+    if (_depthStencilView) _depthStencilView->Release();
+    if (_depthStencilBuffer) _depthStencilBuffer->Release();
+
 }
 
 void Application::Update()
@@ -447,15 +472,78 @@ void Application::Update()
     // Animate the cube
     //
     
-    for (int i = 0; i < 4; i++)
-    {
-        XMMATRIX rotated = XMMatrixIdentity();
-        rotated = XMMatrixMultiply(rotated, XMMatrixRotationX(t * i));
-        rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t));
-        rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(i, i, i*2));
+    //sun
+    XMMATRIX rotated = XMMatrixIdentity();
 
-        XMStoreFloat4x4(&_worldMatrices[i], rotated);
-    }
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(2, 2, 2));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*.1));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 0));
+    XMStoreFloat4x4(&_worldMatrices[0], rotated);
+
+    //planets
+    rotated = XMMatrixIdentity();
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.5, .5, .5));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 9));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t));
+    XMStoreFloat4x4(&_worldMatrices[1], rotated);
+
+    rotated = XMMatrixIdentity();
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.4, .4, .4));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*2));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 6));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*1.5));
+    XMStoreFloat4x4(&_worldMatrices[2], rotated);
+
+    rotated = XMMatrixIdentity();
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(1, 1, 1));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*.5));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 16));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*0.5));
+    XMStoreFloat4x4(&_worldMatrices[3], rotated);
+
+    //moon
+    rotated = XMMatrixIdentity();
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.2, .2, .2));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 2));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*3));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 6));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*1.5));
+    XMStoreFloat4x4(&_worldMatrices[4], rotated);
+
+    rotated = XMMatrixIdentity();
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.25, .25, .25));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 2));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 3));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 9));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t));
+    XMStoreFloat4x4(&_worldMatrices[5], rotated);
+
+    rotated = XMMatrixIdentity();
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.4, .4, .4));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 4));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 1.5));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 16));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 0.5));
+    XMStoreFloat4x4(&_worldMatrices[6], rotated);
+
+    rotated = XMMatrixIdentity();
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.1, .1, .1));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 2.5));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 5));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 16));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 0.5));
+    XMStoreFloat4x4(&_worldMatrices[7], rotated);
+
+    //for (int i = 0; i < 8; i++)
+    //{
+    //    XMMATRIX rotated = XMMatrixIdentity();
+    //    //rotated = XMMatrixMultiply(rotated, XMMatrixRotationX(t * i));
+    //    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t));
+    //    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 5));
+    //    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(3, 3, 3));
+    //    XMStoreFloat4x4(&_worldMatrices[0], rotated);
+    //}
 }
 
 void Application::Draw()
@@ -466,7 +554,7 @@ void Application::Draw()
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 8; i++)
     {
 
         XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
@@ -491,6 +579,9 @@ void Application::Draw()
         _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
         _pImmediateContext->DrawIndexed(36, 0, 0);
     }
+
+    _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
     //
     // Present our back buffer to our front buffer
     //
