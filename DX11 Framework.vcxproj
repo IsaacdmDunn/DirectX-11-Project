@@ -384,6 +384,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <CLInclude Include="resource.h" />
+    <ClInclude Include="Vector3D.h" />
     <ResourceCompile Include="DX11 Framework.rc" />
   </ItemGroup>
   <ItemGroup>

@@ -46,6 +46,9 @@ private:
 	XMFLOAT4X4              _projection;
 	ID3D11DepthStencilView* _depthStencilView;
 	ID3D11Texture2D* _depthStencilBuffer;
+	ID3D11RasterizerState* _wireFrame;
+	bool wireFrameActive = true;
+
 
 
 private:

@@ -66,7 +66,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     }
 
 	// Initialize the world matrix
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 109; i++)
     {
         XMFLOAT4X4 world;
 
@@ -76,7 +76,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     }
 
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -18.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -25.0f, 0.0f);
 	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.3f, 1.0f, 0.0f, 0.0f);
 
@@ -420,7 +420,16 @@ HRESULT Application::InitDevice()
 	bd.CPUAccessFlags = 0;
     hr = _pd3dDevice->CreateBuffer(&bd, nullptr, &_pConstantBuffer);
 
+    //sets render state
     
+    D3D11_RASTERIZER_DESC wfdesc;
+    ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+
+    wfdesc.FillMode = D3D11_FILL_WIREFRAME;
+    wfdesc.CullMode = D3D11_CULL_NONE;
+    hr = _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);
+
+    _pImmediateContext->RSSetState(_wireFrame);
 
     if (FAILED(hr))
         return hr;
@@ -445,6 +454,7 @@ void Application::Cleanup()
 
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
+    if (_wireFrame) _wireFrame->Release();
 
 }
 
@@ -467,6 +477,13 @@ void Application::Update()
 
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
     }
+
+    if (GetKeyState('A') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
+    {
+        wireFrameActive = !wireFrameActive;
+    }
+
+    
 
     //
     // Animate the cube
@@ -502,6 +519,13 @@ void Application::Update()
     rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*0.5));
     XMStoreFloat4x4(&_worldMatrices[3], rotated);
 
+    rotated = XMMatrixIdentity();
+    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.8, .8, .8));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * .3));
+    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 22));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * .3));
+    XMStoreFloat4x4(&_worldMatrices[8], rotated);
+
     //moon
     rotated = XMMatrixIdentity();
     rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.2, .2, .2));
@@ -535,15 +559,19 @@ void Application::Update()
     rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 0.5));
     XMStoreFloat4x4(&_worldMatrices[7], rotated);
 
-    //for (int i = 0; i < 8; i++)
-    //{
-    //    XMMATRIX rotated = XMMatrixIdentity();
-    //    //rotated = XMMatrixMultiply(rotated, XMMatrixRotationX(t * i));
-    //    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t));
-    //    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 5));
-    //    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(3, 3, 3));
-    //    XMStoreFloat4x4(&_worldMatrices[0], rotated);
-    //}
+    for (int i = 0; i < 100; i++)
+    {
+        float rotationOffset = rand() % 100;
+        float localTranformOffet = (rand() % 30) / 10;
+        int v1 = rand() % 100;
+        rotated = XMMatrixIdentity();
+        rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.05, .05, .05));
+        rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 3 + localTranformOffet));
+        rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 5 + rotationOffset));
+        rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 22));
+        rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 0.3));
+        XMStoreFloat4x4(&_worldMatrices[i+9], rotated);
+    }
 }
 
 void Application::Draw()
@@ -554,7 +582,7 @@ void Application::Draw()
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 109; i++)
     {
 
         XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
