@@ -32,9 +32,9 @@ public:
     vector3d normalization();   //normalized vector
 
     //Scalar operations
-    float square(); //gives square of the vector
+    float square(const vector3d& vec); //gives square of the vector
     float distance(const vector3d& vec); //distance between two vectors
-    float magnitude();  //magnitude of the vector
+    float magnitude(const vector3d& vec);  //magnitude of the vector
 
 
     //Display operations 

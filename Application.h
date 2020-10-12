@@ -7,6 +7,7 @@
 #include <directxcolors.h>
 #include "resource.h"
 #include <vector>
+#include "Vector3D.h"
 
 using namespace DirectX;
 
