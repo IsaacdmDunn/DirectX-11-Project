@@ -3,6 +3,7 @@
 #include<iostream>
 #include<math.h>
 #include<assert.h>
+
 using namespace std;
 
 class vector3d

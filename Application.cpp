@@ -25,13 +25,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 Application::Application()
 {
-    vector3d V1 = vector3d(2, 5, 7); //constructs a vector
-    vector3d V2 = vector3d(3, 7, 10); //and another
-    vector3d V3 = V1 + V2;   // adds them using overloaded operator
-    V3.disp(); //prints the new values
-    //provide the other operations.
-
-
 	_hInst = nullptr;
 	_hWnd = nullptr;
 	_driverType = D3D_DRIVER_TYPE_NULL;
@@ -43,8 +36,10 @@ Application::Application()
 	_pVertexShader = nullptr;
 	_pPixelShader = nullptr;
 	_pVertexLayout = nullptr;
-	_pVertexBuffer = nullptr;
-	_pIndexBuffer = nullptr;
+    _pCubeVertexBuffer = nullptr;
+    _pCubeIndexBuffer = nullptr;
+    _pPyramidVertexBuffer = nullptr;
+    _pPyramidIndexBuffer = nullptr;
 	_pConstantBuffer = nullptr;
 }
 
@@ -85,7 +80,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     // Initialize the view matrix
 	XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -25.0f, 0.0f);
 	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMVECTOR Up = XMVectorSet(0.3f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    //float gTime
 
 	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(Eye, At, Up));
 
@@ -165,7 +161,7 @@ HRESULT Application::InitVertexBuffer()
 	HRESULT hr;
 
     // Create vertex buffer
-    SimpleVertex vertices[] =
+    SimpleVertex cubeVertices[] =
     {
         { XMFLOAT3( -1.0f, -1.0f, -1.0f ), XMFLOAT4( 1.0f, 0.0f, 0.0f, 1.0f ) },
         { XMFLOAT3( 1.0f, -1.0f, -1.0f ), XMFLOAT4( 0.0f, 1.0f, 0.0f, 1.0f ) },
@@ -178,18 +174,42 @@ HRESULT Application::InitVertexBuffer()
         { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
     };
 
-    D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(vertices);
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
+    // Create vertex buffer
+    SimpleVertex pyramidVertices[] =
+    {
+        { XMFLOAT3(-1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, //bl
+        { XMFLOAT3(1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f) }, //br
+        { XMFLOAT3(-1.0f, 0.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, //tl
+        { XMFLOAT3(1.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, //tr
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }, //top
+    };
 
-    D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-    InitData.pSysMem = vertices;
+    D3D11_BUFFER_DESC bdCube;
+	ZeroMemory(&bdCube, sizeof(bdCube));
+    bdCube.Usage = D3D11_USAGE_DEFAULT;
+    bdCube.ByteWidth = sizeof(cubeVertices);
+    bdCube.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bdCube.CPUAccessFlags = 0;
 
-    hr = _pd3dDevice->CreateBuffer(&bd, &InitData, &_pVertexBuffer);
+    D3D11_SUBRESOURCE_DATA InitCubeData;
+	ZeroMemory(&InitCubeData, sizeof(InitCubeData));
+    InitCubeData.pSysMem = cubeVertices;
+
+    hr = _pd3dDevice->CreateBuffer(&bdCube, &InitCubeData, &_pCubeVertexBuffer);
+
+
+    D3D11_BUFFER_DESC bdPyramid;
+    ZeroMemory(&bdPyramid, sizeof(bdPyramid));
+    bdPyramid.Usage = D3D11_USAGE_DEFAULT;
+    bdPyramid.ByteWidth = sizeof(pyramidVertices);
+    bdPyramid.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bdPyramid.CPUAccessFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA InitPyramidData;
+    ZeroMemory(&InitPyramidData, sizeof(InitPyramidData));
+    InitPyramidData.pSysMem = pyramidVertices;
+
+    hr = _pd3dDevice->CreateBuffer(&bdCube, &InitPyramidData, &_pPyramidVertexBuffer);
 
     if (FAILED(hr))
         return hr;
@@ -201,8 +221,8 @@ HRESULT Application::InitIndexBuffer()
 {
 	HRESULT hr;
 
-    // Create index buffer
-    WORD indices[] =
+    // Create cube index buffer
+    WORD cubeIndices[] =
     {
         0, 2, 1,    // side 1
         2, 3, 1,
@@ -218,18 +238,44 @@ HRESULT Application::InitIndexBuffer()
         1, 5, 4,
     };
 
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
+    // Create pyramid index buffer
+    WORD pyramidIndices[] =
+    {
+        0, 1, 2,    // side 1
+        1, 3, 2,
+        2, 0, 4,    // side 2
+        3, 2, 4,
+        1, 3, 4,    // side 3
+        0, 1, 4,
+    };
 
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(indices);     
-    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
+	D3D11_BUFFER_DESC bdCube;
+	ZeroMemory(&bdCube, sizeof(bdCube));
 
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-    InitData.pSysMem = indices;
-    hr = _pd3dDevice->CreateBuffer(&bd, &InitData, &_pIndexBuffer);
+    bdCube.Usage = D3D11_USAGE_DEFAULT;
+    bdCube.ByteWidth = sizeof(cubeIndices);
+    bdCube.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    bdCube.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA InitCubeData;
+	ZeroMemory(&InitCubeData, sizeof(InitCubeData));
+    InitCubeData.pSysMem = cubeIndices;
+    hr = _pd3dDevice->CreateBuffer(&bdCube, &InitCubeData, &_pCubeIndexBuffer);
+
+
+    D3D11_BUFFER_DESC bdPyramid;
+    ZeroMemory(&bdPyramid, sizeof(bdPyramid));
+
+    bdPyramid.Usage = D3D11_USAGE_DEFAULT;
+    bdPyramid.ByteWidth = sizeof(pyramidIndices);
+    bdPyramid.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    bdPyramid.CPUAccessFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA InitData;
+    ZeroMemory(&InitData, sizeof(InitData));
+    InitData.pSysMem = pyramidIndices;
+    hr = _pd3dDevice->CreateBuffer(&bdPyramid, &InitData, &_pPyramidIndexBuffer);
+
 
     if (FAILED(hr))
         return hr;
@@ -408,12 +454,12 @@ HRESULT Application::InitDevice()
     // Set vertex buffer
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
-    _pImmediateContext->IASetVertexBuffers(0, 1, &_pVertexBuffer, &stride, &offset);
+    _pImmediateContext->IASetVertexBuffers(0, 1, &_pPyramidVertexBuffer, &stride, &offset);
 
 	InitIndexBuffer();
 
     // Set index buffer
-    _pImmediateContext->IASetIndexBuffer(_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    _pImmediateContext->IASetIndexBuffer(_pPyramidIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -427,16 +473,16 @@ HRESULT Application::InitDevice()
 	bd.CPUAccessFlags = 0;
     hr = _pd3dDevice->CreateBuffer(&bd, nullptr, &_pConstantBuffer);
 
-    //sets render state
+    ////sets render state
+    //
+    //D3D11_RASTERIZER_DESC wfdesc;
+    //ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+
+    //wfdesc.FillMode = D3D11_FILL_WIREFRAME;
+    //wfdesc.CullMode = D3D11_CULL_NONE;
+    //hr = _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);
+
     
-    D3D11_RASTERIZER_DESC wfdesc;
-    ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
-
-    wfdesc.FillMode = D3D11_FILL_WIREFRAME;
-    wfdesc.CullMode = D3D11_CULL_NONE;
-    hr = _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);
-
-    _pImmediateContext->RSSetState(_wireFrame);
 
     if (FAILED(hr))
         return hr;
@@ -449,8 +495,10 @@ void Application::Cleanup()
     if (_pImmediateContext) _pImmediateContext->ClearState();
 
     if (_pConstantBuffer) _pConstantBuffer->Release();
-    if (_pVertexBuffer) _pVertexBuffer->Release();
-    if (_pIndexBuffer) _pIndexBuffer->Release();
+    if (_pCubeVertexBuffer) _pCubeVertexBuffer->Release();
+    if (_pCubeIndexBuffer) _pCubeIndexBuffer->Release();
+    if (_pPyramidVertexBuffer) _pPyramidVertexBuffer->Release();
+    if (_pPyramidIndexBuffer) _pPyramidIndexBuffer->Release();
     if (_pVertexLayout) _pVertexLayout->Release();
     if (_pVertexShader) _pVertexShader->Release();
     if (_pPixelShader) _pPixelShader->Release();
@@ -462,6 +510,7 @@ void Application::Cleanup()
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
     if (_wireFrame) _wireFrame->Release();
+    if (_solid) _solid->Release();
 
 }
 
@@ -487,20 +536,20 @@ void Application::Update()
 
     if (GetKeyState('A') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
     {
-        wireFrameActive = !wireFrameActive;
     }
 
-    
+    gTime = t;
 
     //
     // Animate the cube
     //
-    
+    InitWireframeView();
+
     //sun
     XMMATRIX rotated = XMMatrixIdentity();
 
     rotated = XMMatrixMultiply(rotated, XMMatrixScaling(2, 2, 2));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t*.1));
+    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t));
     rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 0));
     XMStoreFloat4x4(&_worldMatrices[0], rotated);
 
@@ -568,13 +617,14 @@ void Application::Update()
 
     for (int i = 0; i < 100; i++)
     {
+        InitSolidView();
         float rotationOffset = rand() % 100;
         float localTranformOffet = (rand() % 30) / 10;
         int v1 = rand() % 100;
         rotated = XMMatrixIdentity();
         rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.05, .05, .05));
         rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 3 + localTranformOffet));
-        rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 5 + rotationOffset));
+        rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t + rotationOffset));
         rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 22));
         rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(t * 0.3));
         XMStoreFloat4x4(&_worldMatrices[i+9], rotated);
@@ -591,7 +641,6 @@ void Application::Draw()
 
     for (int i = 0; i < 109; i++)
     {
-
         XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
         XMMATRIX view = XMLoadFloat4x4(&_view);
         XMMATRIX projection = XMLoadFloat4x4(&_projection);
@@ -622,4 +671,22 @@ void Application::Draw()
     //
     _pSwapChain->Present(0, 0);
 
+}
+
+HRESULT Application::InitWireframeView()
+{
+    D3D11_RASTERIZER_DESC wfdesc;
+    ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+    wfdesc.FillMode = D3D11_FILL_WIREFRAME;
+    wfdesc.CullMode = D3D11_CULL_NONE;
+    return _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);
+}
+
+HRESULT Application::InitSolidView()
+{
+    D3D11_RASTERIZER_DESC sodesc;
+    ZeroMemory(&sodesc, sizeof(D3D11_RASTERIZER_DESC));
+    sodesc.FillMode = D3D11_FILL_SOLID;
+    sodesc.CullMode = D3D11_CULL_BACK;
+    return _pd3dDevice->CreateRasterizerState(&sodesc, &_solid);
 }
