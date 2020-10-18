@@ -1,17 +1,15 @@
 ﻿  Application.cpp
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(568,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(573,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(575,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(580,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(582,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(591,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(605,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(607,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(603,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(608,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(610,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(615,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(621,30): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(622,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(629,65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(623,13): warning C4189: 'v1': local variable is initialized but not referenced
-  DX11 Framework.cpp
-  Generating Code...
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(617,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(626,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(640,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(642,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(650,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(656,30): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(657,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(664,65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(658,13): warning C4189: 'v1': local variable is initialized but not referenced
   DX11 Framework.vcxproj -> C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Debug\DX11 Framework.exe
