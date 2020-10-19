@@ -569,7 +569,7 @@ void Application::Update()
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
     }
 
-    if (GetKeyState('A') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
+    if (GetKeyState('A') & 0x8000)
     {
     }
 
