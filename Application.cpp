@@ -36,11 +36,12 @@ Application::Application()
 	_pVertexShader = nullptr;
 	_pPixelShader = nullptr;
 	_pVertexLayout = nullptr;
-    _pCubeVertexBuffer = nullptr;
     _pCubeIndexBuffer = nullptr;
-    _pPyramidVertexBuffer = nullptr;
     _pPyramidIndexBuffer = nullptr;
+    _pPlaneIndexBuffer = nullptr;
 	_pConstantBuffer = nullptr;
+
+    Shapes* shapes = new Shapes();
 }
 
 Application::~Application()
@@ -50,6 +51,8 @@ Application::~Application()
 
 HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 {
+    
+
     if (FAILED(InitWindow(hInstance, nCmdShow)))
 	{
         return E_FAIL;
@@ -161,37 +164,7 @@ HRESULT Application::InitVertexBuffer()
 	HRESULT hr;
 
     // Create vertex buffer
-    SimpleVertex cubeVertices[] =
-    {
-        { XMFLOAT3( -1.0f, -1.0f, -1.0f ), XMFLOAT4( 1.0f, 0.0f, 0.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, -1.0f ), XMFLOAT4( 0.0f, 1.0f, 0.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, 1.0f, -1.0f ), XMFLOAT4( 0.0f, 0.0f, 1.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, -1.0f ), XMFLOAT4( 1.0f, 1.0f, 0.0f, 1.0f ) },
-
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) },
-        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) },
-        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-    };
-
-    // Create vertex buffer
-    SimpleVertex planeVertices[] =
-    {
-        { XMFLOAT3(-1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, //bl
-        { XMFLOAT3(1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f) }, //br
-        { XMFLOAT3(-1.0f, 0.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, //tl
-        { XMFLOAT3(1.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, //tr
-    };
-
-    // Create vertex buffer
-    SimpleVertex pyramidVertices[] =
-    {
-        { XMFLOAT3(-1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, //bl
-        { XMFLOAT3(1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f) }, //br
-        { XMFLOAT3(-1.0f, 0.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, //tl
-        { XMFLOAT3(1.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, //tr
-        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }, //top
-    };
+    
 
     D3D11_BUFFER_DESC bdCube;
 	ZeroMemory(&bdCube, sizeof(bdCube));
@@ -204,7 +177,7 @@ HRESULT Application::InitVertexBuffer()
 	ZeroMemory(&InitCubeData, sizeof(InitCubeData));
     InitCubeData.pSysMem = cubeVertices;
 
-    hr = _pd3dDevice->CreateBuffer(&bdCube, &InitCubeData, &_pCubeVertexBuffer);
+    hr = _pd3dDevice->CreateBuffer(&bdCube, &InitCubeData, &shapes->_pCubeVertexBuffer);
 
 
     D3D11_BUFFER_DESC bdPyramid;
@@ -218,7 +191,7 @@ HRESULT Application::InitVertexBuffer()
     ZeroMemory(&InitPyramidData, sizeof(InitPyramidData));
     InitPyramidData.pSysMem = pyramidVertices;
 
-    hr = _pd3dDevice->CreateBuffer(&bdPyramid, &InitPyramidData, &_pPyramidVertexBuffer);
+    hr = _pd3dDevice->CreateBuffer(&bdPyramid, &InitPyramidData, &shapes->_pPyramidVertexBuffer);
 
     D3D11_BUFFER_DESC bdPlane;
     ZeroMemory(&bdPlane, sizeof(bdPlane));
@@ -231,7 +204,7 @@ HRESULT Application::InitVertexBuffer()
     ZeroMemory(&InitPlaneData, sizeof(InitPlaneData));
     InitPlaneData.pSysMem = planeVertices;
 
-    hr = _pd3dDevice->CreateBuffer(&bdPlane, &InitPlaneData, &_pPlaneVertexBuffer);
+    hr = _pd3dDevice->CreateBuffer(&bdPlane, &InitPlaneData, &shapes->_pPlaneVertexBuffer);
 
     if (FAILED(hr))
         return hr;
@@ -528,12 +501,7 @@ void Application::Cleanup()
     if (_pImmediateContext) _pImmediateContext->ClearState();
 
     if (_pConstantBuffer) _pConstantBuffer->Release();
-    if (_pCubeVertexBuffer) _pCubeVertexBuffer->Release();
-    if (_pCubeIndexBuffer) _pCubeIndexBuffer->Release();
-    if (_pPyramidVertexBuffer) _pPyramidVertexBuffer->Release();
-    if (_pPyramidIndexBuffer) _pPyramidIndexBuffer->Release();
-    if (_pPlaneVertexBuffer) _pPlaneVertexBuffer->Release();
-    if (_pPlaneIndexBuffer) _pPlaneIndexBuffer->Release();
+    
     if (_pVertexLayout) _pVertexLayout->Release();
     if (_pVertexShader) _pVertexShader->Release();
     if (_pPixelShader) _pPixelShader->Release();
@@ -681,47 +649,7 @@ void Application::Draw()
 
     for (int i = 0; i < 110; i++)
     {
-        // Set index and vertex buffer
-        // Set vertex buffer
-        UINT stride = sizeof(SimpleVertex);
-        UINT offset = 0;
-        if (i == 109)
-        {
-            _pImmediateContext->IASetVertexBuffers(0, 1, &_pPlaneVertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(_pPlaneIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-        }
-        else if (i > 5)
-        {
-            _pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-        }
-        else
-        {
-            _pImmediateContext->IASetVertexBuffers(0, 1, &_pPyramidVertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(_pPyramidIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-        }
-        
-        XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
-        XMMATRIX view = XMLoadFloat4x4(&_view);
-        XMMATRIX projection = XMLoadFloat4x4(&_projection);
-        //
-        // Update variables
-        //
-        ConstantBuffer cb;
-        cb.mWorld = XMMatrixTranspose(world);
-        cb.mView = XMMatrixTranspose(view);
-        cb.mProjection = XMMatrixTranspose(projection);
-
-        _pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
-
-        //
-        // Renders a triangle
-        //
-        _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
-        _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
-        _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
-        _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
-        _pImmediateContext->DrawIndexed(36, 0, 0);
+        shapes->DrawCube(_pCubeIndexBuffer, _pImmediateContext, _pVertexShader, _pPixelShader, _pConstantBuffer, _worldMatrices, i, _view, _projection);
     }
 
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
