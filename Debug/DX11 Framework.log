@@ -1,35 +1,16 @@
 ﻿  Application.cpp
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(44,22): warning C4458: declaration of 'shapes' hides class member
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(92,10): message : see declaration of 'Application::shapes'
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(44,13): warning C4189: 'shapes': local variable is initialized but not referenced
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(571,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(576,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(578,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(583,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(585,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(594,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(608,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(610,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(618,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(624,30): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(625,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(632,65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(626,13): warning C4189: 'v1': local variable is initialized but not referenced
-  DX11 Framework.cpp
-  Matrix.cpp
-  Shapes.cpp
-  Vector3D.cpp
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Vector3D.cpp(80,50): warning C4239: nonstandard extension used: 'return': conversion from 'vector3d' to 'vector3d &'
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Vector3D.cpp(80,50): message : A non-const reference may only be bound to an lvalue
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Vector3D.cpp(101,40): warning C4100: 'vec': unreferenced formal parameter
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Vector3D.cpp(107,42): warning C4100: 'vec': unreferenced formal parameter
-  Generating Code...
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Vector3D.cpp(80): warning C4172: returning address of local variable or temporary
-Application.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
-DX11 Framework.obj : error LNK2005: "struct SimpleVertex * cubeVertices" (?cubeVertices@@3PAUSimpleVertex@@A) already defined in Application.obj
-DX11 Framework.obj : error LNK2005: "struct SimpleVertex * planeVertices" (?planeVertices@@3PAUSimpleVertex@@A) already defined in Application.obj
-DX11 Framework.obj : error LNK2005: "struct SimpleVertex * pyramidVertices" (?pyramidVertices@@3PAUSimpleVertex@@A) already defined in Application.obj
-Shapes.obj : error LNK2005: "struct SimpleVertex * cubeVertices" (?cubeVertices@@3PAUSimpleVertex@@A) already defined in Application.obj
-Shapes.obj : error LNK2005: "struct SimpleVertex * planeVertices" (?planeVertices@@3PAUSimpleVertex@@A) already defined in Application.obj
-Shapes.obj : error LNK2005: "struct SimpleVertex * pyramidVertices" (?pyramidVertices@@3PAUSimpleVertex@@A) already defined in Application.obj
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Debug\DX11 Framework.exe : fatal error LNK1169: one or more multiply defined symbols found
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(125,14): warning C4324: 'Application': structure was padded due to alignment specifier
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(626,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(631,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(633,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(638,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(640,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(649,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(663,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(665,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(673,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(679,30): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(680,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(687,65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(681,13): warning C4189: 'v1': local variable is initialized but not referenced
+  DX11 Framework.vcxproj -> C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Debug\DX11 Framework.exe

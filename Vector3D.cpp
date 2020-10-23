@@ -1,4 +1,5 @@
 #include "Vector3D.h"
+using namespace DirectX;
 
 vector3d::vector3d()
 {
@@ -96,6 +97,16 @@ vector3d vector3d::normalization()
 {
 	//TO DO
 	return vector3d();
+}
+
+void vector3d::ComputeNormal(const vector3d& p0, const vector3d& p1, const vector3d& p2, vector3d& out)
+{
+	vector3d u = { p1.x - p0.x, p1.y - p0.y, p1.z - p0.z };
+	vector3d v = { p2.x - p0.x, p2.y - p0.y, p2.z - p0.z };
+
+	out = { u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z, u.x * v.y - u.y * v.x };
+	
+	//return vector3d(out.x, out.y, out.z);
 }
 
 float vector3d::square(const vector3d& vec)

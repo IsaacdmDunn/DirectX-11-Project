@@ -8,21 +8,41 @@
 #include "resource.h"
 #include <vector>
 #include "Vector3D.h"
-#include "Shapes.h"
 
 using namespace DirectX;
 
-struct Material
+struct SimpleVertex1
 {
-	Material() { ZeroMemory(this, sizeof(this)); };
-	XMFLOAT4 Ambient;
-	XMFLOAT4 Diffuse;
-	XMFLOAT4 Specular;
-	XMFLOAT4 Reflect;
+    XMFLOAT3 Pos;
+    XMFLOAT4 Color;
+	//XMFLOAT3 Normal;
 };
 
+struct SimpleVertex
+{
+    XMFLOAT3 Pos;
+	XMFLOAT3 Normal;
+};
+
+struct ConstantBuffer
+{
+	XMMATRIX mWorld;
+	XMMATRIX mView;
+	XMMATRIX mProjection;
+	float gTime;
+	XMFLOAT4 DiffuseMtrl;
+	XMFLOAT4 DiffuseLight;
+	XMFLOAT4 AmbientMtrl;
+	XMFLOAT4 AmbientLight;
+	XMFLOAT4 SpecularMtrl;
+	XMFLOAT4 SpecularLight;
+	float specularPower;
+	XMFLOAT3 EyePos;
+	XMFLOAT3 LightVec3;
+
+};
 //
-//typedef struct //D3D11_RASTERIZER_DESC {
+//typedef struct D3D11_RASTERIZER_DESC {
 //	D3D11_FILL_MODE FillMode;
 //	D3D11_CULL_MODE CullMode;
 //	BOOL            FrontCounterClockwise;
@@ -49,12 +69,16 @@ private:
 	ID3D11VertexShader*     _pVertexShader;
 	ID3D11PixelShader*      _pPixelShader;
 	ID3D11InputLayout*      _pVertexLayout;
+	ID3D11Buffer*           _pCubeVertexBuffer;
 	ID3D11Buffer*			_pCubeIndexBuffer;
+	ID3D11Buffer*			_pPlaneVertexBuffer;
 	ID3D11Buffer*			_pPlaneIndexBuffer;
+	ID3D11Buffer*           _pPyramidVertexBuffer;
 	ID3D11Buffer*           _pPyramidIndexBuffer;
 	ID3D11Buffer*           _pConstantBuffer;
 	XMFLOAT4X4              _world;
 	std::vector<XMFLOAT4X4> _worldMatrices;
+	std::vector<XMFLOAT4X4> _worldMatrices2;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
 	ID3D11DepthStencilView* _depthStencilView;
@@ -89,6 +113,16 @@ public:
 	HRESULT InitWireframeView();
 	HRESULT InitSolidView();
 
-	Shapes* shapes;
+	XMFLOAT3 lightDirection;
+	XMFLOAT4 diffuseMaterial;
+	XMFLOAT4 diffuseLight;
+	XMFLOAT4 ambientMaterial;
+	XMFLOAT4 ambientLight;
+
+	XMFLOAT4 specularLight;
+	XMFLOAT4 specularMaterial;
+	float specularPower;
+	XMVECTOR eye;
+
 };
 
