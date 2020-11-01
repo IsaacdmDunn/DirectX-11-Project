@@ -89,13 +89,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
 
     lightDirection = XMFLOAT3(0.25f, 0.5f, -1.0f);
-    diffuseMaterial = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    diffuseMaterial = XMFLOAT4(0.9f, 0.2f, 0.6f, 1.0f);
     diffuseLight = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     ambientLight = XMFLOAT4(0.2f, 0.2f, 0.2f, 0.2f);
-    ambientMaterial = XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f);
-    specularLight = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-    specularMaterial = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    specularPower = 1.0f;
+    ambientMaterial = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    specularLight = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
+    specularMaterial = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
+    specularPower = 10.0f;
+    eye = Eye;
 
 	return S_OK;
 }
@@ -146,7 +147,7 @@ HRESULT Application::InitShadersAndInputLayout()
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        //{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
@@ -574,6 +575,9 @@ void Application::Cleanup()
 
 void Application::Update()
 {
+
+
+
     // Update our time
     static float t = 0.0f;
 
@@ -594,6 +598,7 @@ void Application::Update()
 
     if (GetKeyState('A') & 0x8000)
     {
+        //lightDirection = XMFLOAT3(rand() % 20 - 10, 0.5f, rand() % 20 - 10);
     }
 
     gTime = t;
@@ -735,9 +740,9 @@ void Application::Draw()
         // Update variables
         //
         ConstantBuffer cb;
-        cb.mWorld = XMMatrixTranspose(world);
         cb.mView = XMMatrixTranspose(view);
         cb.mProjection = XMMatrixTranspose(projection);
+        cb.mWorld = XMMatrixTranspose(world);
 
         cb.DiffuseMtrl = diffuseMaterial;
         cb.DiffuseLight = diffuseLight;
@@ -749,7 +754,7 @@ void Application::Draw()
         cb.SpecularLight = specularLight;
         cb.SpecularMtrl = specularMaterial;
         cb.specularPower = specularPower;
-        cb.EyePos = XMFLOAT3(eye.m128_f32[0], eye.m128_f32[1], eye.m128_f32[2]);
+        cb.EyePos = { eye.m128_f32[0], eye.m128_f32[1], eye.m128_f32[2] };
 
 
         _pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);

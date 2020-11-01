@@ -7,23 +7,21 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer ConstantBuffer : register( b0 )
+cbuffer ConstantBuffer : register(b0)
 {
-	matrix World;
-	matrix View;
-	matrix Projection;
+    matrix World;
+    matrix View;
+    matrix Projection;
 
-    float4 DiffuseMtrl;
-    float4 DiffuseLight;
-    float4 AmbientMtrl;
-    float4 AmbientLight;
-    float4 SpecularLight;
-    float4 SpecularMtrl;
-    float SpecularPower;
-    float3 padding;
-    float3 EyePosW;
-    float padding2;
-    float3 LightVecW;
+    float4 diffuseMat;
+    float4 diffuseLight;
+    float4 ambientMat;
+    float4 ambientLight;
+    float4 specularMat;
+    float4 specularLight;
+    float specularPower;
+    float3 eyePosW;
+    float3 lightVecW;
 
 }
 
@@ -31,24 +29,24 @@ cbuffer ConstantBuffer : register( b0 )
 struct VS_OUTPUT
 {
     float4 Pos : SV_POSITION;
-    float3 Norm : NORMAL;
-    float3 EyePos : POSITION;
+    float3 normalW : NORMAL;
+    float3 eye : POSITION;
 };
 
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-VS_OUTPUT VS( float4 Pos : POSITION, float4 Normal : NORMAL)
+VS_OUTPUT VS(float4 Pos : POSITION, float3 Normal : NORMAL)
 {
     VS_OUTPUT output = (VS_OUTPUT)0;
-    output.Pos = mul( Pos, World );
-    float3 toEye = normalize(EyePosW - output.Pos.xyz);
-    output.Pos = mul( output.Pos, View );
-    output.Pos = mul( output.Pos, Projection );
-    output.Norm = Normal;
 
-    
-    output.EyePos = EyePosW;
+    output.Pos = mul(Pos, World);
+    output.Pos = mul(output.Pos, View);
+    output.Pos = mul(output.Pos, Projection);
+    output.eye = normalize(eyePosW.xyz - output.Pos.xyz);
+    float3 normalW = mul(float4(Normal, 0.0f), World).xyz;
+    output.normalW = normalize(normalW);
+
     return output;
 }
 
@@ -56,26 +54,23 @@ VS_OUTPUT VS( float4 Pos : POSITION, float4 Normal : NORMAL)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS( VS_OUTPUT input ) : SV_Target
+float4 PS(VS_OUTPUT input) : SV_Target
 {
-    // fragment to light vector data
-    const float3 vToL = LightVecW - input.Pos.xyz;
-    const float distToL = length(vToL);
-    const float3 dirToL = vToL / distToL;
+    //normalise
+    input.normalW = normalize(input.normalW);
 
-    // diffuse intensity
-    const float3 diffuse = DiffuseMtrl * 1.0f * max(0.0f, dot(dirToL, input.Norm));
-    // reflected light vector
-    const float3 w = input.Norm * dot(vToL, input.Norm);
-    const float3 r = w * 2.0f - vToL;
+    //calculate lighting
+    float reflection = reflect(-lightVecW, input.normalW);
+    float diffuseAmount = max(dot(lightVecW, input.normalW), 0.0f);
+    float specularAmount = pow(max(dot(reflection, input.eye), 0), specularPower);
+    float3 specular = specularAmount * (specularMat * specularLight).rgb;
+    float3 ambient = ambientMat * ambientLight;
+    float3 diffuse = diffuseAmount * (diffuseMat * diffuseLight).rgb;
 
-    // calculate specular intensity based on angle between viewing vector and reflection vector, narrow with power function
-    const float3 specular = (DiffuseMtrl * 1.0f) * SpecularPower * pow(max(0.0f, dot(normalize(-r), normalize(input.Pos.xyz))), SpecularPower);
-    // final color
+    //clamp color values between 0 and 1
+    float4 colour;
+    colour.rgb = clamp(diffuse, 0, 1) + ambient + clamp(specular, 0, 1);
+    colour.a = diffuseMat.a;
 
-    float3 ambient = AmbientMtrl * AmbientLight;
-
-    float4 finalColour = float4(diffuse + ambient + specular, 1.0f);
-
-    return float4(finalColour);
+    return colour;
 }

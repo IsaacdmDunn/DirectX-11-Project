@@ -1,16 +1,16 @@
 ﻿  Application.cpp
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(125,14): warning C4324: 'Application': structure was padded due to alignment specifier
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(626,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(124,14): warning C4324: 'Application': structure was padded due to alignment specifier
 C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(631,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(633,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(638,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(640,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(649,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(663,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(665,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(673,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(679,30): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(680,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(687,65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(681,13): warning C4189: 'v1': local variable is initialized but not referenced
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(636,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(638,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(643,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(645,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(654,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(668,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(670,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(678,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(684,30): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(685,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(692,65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(686,13): warning C4189: 'v1': local variable is initialized but not referenced
   DX11 Framework.vcxproj -> C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Debug\DX11 Framework.exe
