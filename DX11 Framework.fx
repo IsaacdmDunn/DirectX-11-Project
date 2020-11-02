@@ -7,6 +7,10 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
+Texture2D txDiffuse : register(t0);
+SamplerState samLinear : register(s0);
+
+
 cbuffer ConstantBuffer : register(b0)
 {
     matrix World;
@@ -32,6 +36,19 @@ struct VS_OUTPUT
     float3 normalW : NORMAL;
     float3 eye : POSITION;
 };
+
+struct VS_INPUT
+{
+    float4 Pos : POSITION;
+    float2 Tex : TEXCOORD0;
+};
+
+struct PS_INPUT
+{
+    float4 Pos : SV_POSITION;
+    float2 Tex : TEXCOORD0;
+};
+
 
 //--------------------------------------------------------------------------------------
 // Vertex Shader
@@ -71,6 +88,8 @@ float4 PS(VS_OUTPUT input) : SV_Target
     float4 colour;
     colour.rgb = clamp(diffuse, 0, 1) + ambient + clamp(specular, 0, 1);
     colour.a = diffuseMat.a;
+
+    float4 textureColour = txDiffuse.Sample(samLinear, input.Tex);
 
     return colour;
 }

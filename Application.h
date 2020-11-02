@@ -15,13 +15,14 @@ struct SimpleVertex1
 {
     XMFLOAT3 Pos;
     XMFLOAT4 Color;
-	//XMFLOAT3 Normal;
+	
 };
 
 struct SimpleVertex
 {
     XMFLOAT3 Pos;
 	XMFLOAT3 Normal;
+	XMFLOAT2 TexCoords;
 };
 
 struct ConstantBuffer
