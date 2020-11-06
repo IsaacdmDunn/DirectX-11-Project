@@ -41,19 +41,6 @@ struct ConstantBuffer
 	XMFLOAT3 LightVec3;
 
 };
-//
-//typedef struct D3D11_RASTERIZER_DESC {
-//	D3D11_FILL_MODE FillMode;
-//	D3D11_CULL_MODE CullMode;
-//	BOOL            FrontCounterClockwise;
-//	INT             DepthBias;
-//	FLOAT           DepthBiasClamp;
-//	FLOAT           SlopeScaledDepthBias;
-//	BOOL            DepthClipEnable;
-//	BOOL            ScissorEnable;
-//	BOOL            MultisampleEnable;
-//	BOOL            AntialiasedLineEnable;
-//} D3D11_RASTERIZER_DESC;
 
 class Application
 {
@@ -88,6 +75,12 @@ private:
 	bool wireFrameActive = false;
 	float gTime;
 
+	ID3D11ShaderResourceView* CubesTexture;
+	ID3D11SamplerState* CubesTexSamplerState;
+
+	ID3D11ShaderResourceView* _pDiffuseTexture = nullptr;
+	ID3D11ShaderResourceView* _pSpecularTexture = nullptr;
+	ID3D11SamplerState* _pSamplerLinear = nullptr;
 
 
 private:
@@ -123,9 +116,5 @@ public:
 	XMFLOAT4 specularMaterial;
 	float specularPower;
 	XMVECTOR eye;
-
-	int x;
-	int y;
-	int z;
 };
 

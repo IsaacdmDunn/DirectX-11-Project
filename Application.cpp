@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "DDSTextureLoader.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -142,6 +143,16 @@ HRESULT Application::InitShadersAndInputLayout()
 
     if (FAILED(hr))
         return hr;
+
+    hr = CreateDDSTextureFromFile(_pd3dDevice, L"Crate_SPEC.dds", nullptr, &_pSpecularTexture);
+    if (FAILED(hr)) {
+        MessageBox(_hWnd, L"Initialization of specular texture failed", L"Error", MB_ICONERROR);
+    }
+
+    hr = CreateDDSTextureFromFile(_pd3dDevice, L"Crate_COLOR.dds", nullptr, &_pDiffuseTexture);
+    if (FAILED(hr)) {
+        MessageBox(_hWnd, L"Initialization of diffuse texture failed", L"Error", MB_ICONERROR);
+    }
 
     // Define the input layout
     D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -766,6 +777,9 @@ void Application::Draw()
         _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
         _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
         _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
+        _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture);
+        _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture);
+        _pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
         _pImmediateContext->DrawIndexed(36, 0, 0);
     }
 

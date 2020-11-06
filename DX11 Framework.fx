@@ -35,6 +35,7 @@ struct VS_OUTPUT
     float4 Pos : SV_POSITION;
     float3 normalW : NORMAL;
     float3 eye : POSITION;
+    float2 Tex : TEXCOORD;
 };
 
 struct VS_INPUT
@@ -53,7 +54,7 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-VS_OUTPUT VS(float4 Pos : POSITION, float3 Normal : NORMAL)
+VS_OUTPUT VS(float4 Pos : POSITION, float3 Normal : NORMAL, float2 Tex : TEXCOORD)
 {
     VS_OUTPUT output = (VS_OUTPUT)0;
 
@@ -63,7 +64,7 @@ VS_OUTPUT VS(float4 Pos : POSITION, float3 Normal : NORMAL)
     output.eye = normalize(eyePosW.xyz - output.Pos.xyz);
     float3 normalW = mul(float4(Normal, 0.0f), World).xyz;
     output.normalW = normalize(normalW);
-
+    output.Tex = Tex;
     return output;
 }
 
@@ -80,6 +81,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
     float reflection = reflect(-lightVecW, input.normalW);
     float diffuseAmount = max(dot(lightVecW, input.normalW), 0.0f);
     float specularAmount = pow(max(dot(reflection, input.eye), 0), specularPower);
+
     float3 specular = specularAmount * (specularMat * specularLight).rgb;
     float3 ambient = ambientMat * ambientLight;
     float3 diffuse = diffuseAmount * (diffuseMat * diffuseLight).rgb;
