@@ -8,6 +8,7 @@
 #include "resource.h"
 #include <vector>
 #include "Vector3D.h"
+#include "Structures.h"
 
 using namespace DirectX;
 

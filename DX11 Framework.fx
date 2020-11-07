@@ -7,8 +7,8 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-Texture2D txDiffuse : register(t0);
-SamplerState samLinear : register(s0);
+Texture2D textureDiffuse : register(t0);
+SamplerState samplerLinear : register(s0);
 
 
 cbuffer ConstantBuffer : register(b0)
@@ -91,7 +91,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
     colour.rgb = clamp(diffuse, 0, 1) + ambient + clamp(specular, 0, 1);
     colour.a = diffuseMat.a;
 
-    float4 textureColour = txDiffuse.Sample(samLinear, input.Tex);
+    colour *= textureDiffuse.Sample(samplerLinear, input.Tex);
 
     return colour;
 }

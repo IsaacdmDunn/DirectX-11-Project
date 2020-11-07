@@ -16,7 +16,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             break;
-
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -144,12 +143,12 @@ HRESULT Application::InitShadersAndInputLayout()
     if (FAILED(hr))
         return hr;
 
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"Crate_SPEC.dds", nullptr, &_pSpecularTexture);
+    hr = CreateDDSTextureFromFile(_pd3dDevice, L"cRage.dds", nullptr, &_pSpecularTexture);
     if (FAILED(hr)) {
         MessageBox(_hWnd, L"Initialization of specular texture failed", L"Error", MB_ICONERROR);
     }
 
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"Crate_COLOR.dds", nullptr, &_pDiffuseTexture);
+    hr = CreateDDSTextureFromFile(_pd3dDevice, L"cRage.dds", nullptr, &_pDiffuseTexture);
     if (FAILED(hr)) {
         MessageBox(_hWnd, L"Initialization of diffuse texture failed", L"Error", MB_ICONERROR);
     }
@@ -185,15 +184,50 @@ HRESULT Application::InitVertexBuffer()
     // Create vertex buffer
     SimpleVertex cubeVertices[] =
     {
-        { XMFLOAT3( -1.0f, -1.0f, -1.0f ),XMFLOAT3(1.0f,-1.0f,-1.0f),   XMFLOAT2(-1.0f,-1.0f),},
-        { XMFLOAT3( 1.0f, -1.0f, -1.0f ), XMFLOAT3(-1.0f,-1.0f,-1.0f),   XMFLOAT2(1.0f,-1.0f),},
-        { XMFLOAT3( -1.0f, 1.0f, -1.0f ), XMFLOAT3(1.0f,1.0f,-1.0f)  ,   XMFLOAT2(1.0f,-1.0f),},
-        { XMFLOAT3( 1.0f, 1.0f, -1.0f ),  XMFLOAT3(-1.0f,1.0f,-1.0f) ,   XMFLOAT2(1.0f,1.0f),},
-                                                                             
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f),   XMFLOAT3(1.0f,-1.0f,1.0f)  ,   XMFLOAT2(-1.0f,-1.0f),},
-        { XMFLOAT3(1.0f, -1.0f, 1.0f),    XMFLOAT3(-1.0f,-1.0f,1.0f) ,   XMFLOAT2(1.0f,-1.0f),},
-        { XMFLOAT3(-1.0f, 1.0f, 1.0f),    XMFLOAT3(1.0f,1.0f,1.0f)   ,   XMFLOAT2(1.0f,-1.0f),},
-        { XMFLOAT3(1.0f, 1.0f, 1.0f),     XMFLOAT3(-1.0f,1.0f,1.0f)  ,   XMFLOAT2(1.0f,1.0f),},
+        { XMFLOAT3(-1.0,  1.0, -1.0),		XMFLOAT3(0.0,  0.0, -1.0),		XMFLOAT2(0.0, 0.0) },	
+        { XMFLOAT3(1.0,  1.0, -1.0),		XMFLOAT3(0.0,  0.0, -1.0),		XMFLOAT2(1.0, 0.0) },  	
+        { XMFLOAT3(-1.0, -1.0, -1.0),		XMFLOAT3(0.0,  0.0, -1.0),		XMFLOAT2(0.0, 1.0) },  	
+        { XMFLOAT3(-1.0, -1.0, -1.0),		XMFLOAT3(0.0,  0.0, -1.0),		XMFLOAT2(0.0, 1.0) },  
+
+        { XMFLOAT3(1.0,  1.0, -1.0),		XMFLOAT3(0.0,  0.0, -1.0),		XMFLOAT2(1.0, 0.0) },  	
+        { XMFLOAT3(1.0, -1.0, -1.0),		XMFLOAT3(0.0,  0.0, -1.0),		XMFLOAT2(1.0, 1.0) },  	
+        { XMFLOAT3(1.0,  1.0, -1.0),		XMFLOAT3(1.0,  0.0,  0.0),		XMFLOAT2(0.0, 0.0) }, 	
+        { XMFLOAT3(1.0,  1.0,  1.0),		XMFLOAT3(1.0,  0.0,  0.0),		XMFLOAT2(1.0, 0.0) },  	
+
+        { XMFLOAT3(1.0, -1.0, -1.0),		XMFLOAT3(1.0,  0.0,  0.0),		XMFLOAT2(0.0, 1.0) },  	
+        { XMFLOAT3(1.0, -1.0, -1.0),		XMFLOAT3(1.0,  0.0,  0.0),		XMFLOAT2(0.0, 1.0) },  	
+        { XMFLOAT3(1.0,  1.0,  1.0),		XMFLOAT3(1.0,  0.0,  0.0),		XMFLOAT2(1.0, 0.0) },  	
+        { XMFLOAT3(1.0, -1.0,  1.0),		XMFLOAT3(1.0,  0.0,  0.0),		XMFLOAT2(1.0, 1.0) },  
+
+        { XMFLOAT3(1.0,  1.0,  1.0),		XMFLOAT3(0.0,  0.0,  1.0),		XMFLOAT2(0.0, 0.0) },  	
+        { XMFLOAT3(-1.0,  1.0,  1.0),		XMFLOAT3(0.0,  0.0,  1.0),		XMFLOAT2(1.0, 0.0) },  	
+        { XMFLOAT3(1.0, -1.0,  1.0),		XMFLOAT3(0.0,  0.0,  1.0),		XMFLOAT2(0.0, 1.0) },  	
+        { XMFLOAT3(1.0, -1.0,  1.0),		XMFLOAT3(0.0,  0.0,  1.0),		XMFLOAT2(0.0, 1.0) },  	
+
+        { XMFLOAT3(-1.0,  1.0,  1.0),		XMFLOAT3(0.0,  0.0,  1.0),		XMFLOAT2(1.0, 0.0) },  	
+        { XMFLOAT3(-1.0, -1.0,  1.0),		XMFLOAT3(0.0,  0.0,  1.0),		XMFLOAT2(1.0, 1.0) },  	
+        { XMFLOAT3(-1.0,  1.0,  1.0),		XMFLOAT3(-1.0,  0.0,  0.0),		XMFLOAT2(0.0, 0.0) }, 	
+        { XMFLOAT3(-1.0,  1.0, -1.0),		XMFLOAT3(-1.0,  0.0,  0.0),		XMFLOAT2(1.0, 0.0) }, 	
+
+        { XMFLOAT3(-1.0, -1.0,  1.0),		XMFLOAT3(-1.0,  0.0,  0.0),		XMFLOAT2(0.0, 1.0) }, 	
+        { XMFLOAT3(-1.0, -1.0,  1.0),		XMFLOAT3(-1.0,  0.0,  0.0),		XMFLOAT2(0.0, 1.0) }, 	
+        { XMFLOAT3(-1.0,  1.0, -1.0),		XMFLOAT3(-1.0,  0.0,  0.0),		XMFLOAT2(1.0, 0.0) }, 	
+        { XMFLOAT3(-1.0, -1.0, -1.0),		XMFLOAT3(-1.0,  0.0,  0.0),		XMFLOAT2(1.0, 1.0) }, 
+
+        { XMFLOAT3(-1.0,  1.0,  1.0),		XMFLOAT3(0.0,  1.0,  0.0),		XMFLOAT2(0.0, 0.0) }, 	
+        { XMFLOAT3(1.0,  1.0,  1.0),		XMFLOAT3(0.0,  1.0,  0.0),		XMFLOAT2(1.0, 0.0) },  	
+        { XMFLOAT3(-1.0,  1.0, -1.0),		XMFLOAT3(0.0,  1.0,  0.0),		XMFLOAT2(0.0, 1.0) },  	
+        { XMFLOAT3(-1.0,  1.0, -1.0),		XMFLOAT3(0.0,  1.0,  0.0),		XMFLOAT2(0.0, 1.0) }, 
+
+        { XMFLOAT3(1.0,  1.0,  1.0),		XMFLOAT3(0.0,  1.0,  0.0),		XMFLOAT2(1.0, 0.0) },  	
+        { XMFLOAT3(1.0,  1.0, -1.0),		XMFLOAT3(0.0,  1.0,  0.0),		XMFLOAT2(1.0, 1.0) },  	
+        { XMFLOAT3(-1.0, -1.0, -1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(0.0, 0.0) },  	
+        { XMFLOAT3(1.0, -1.0, -1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(1.0, 0.0) }, 
+
+        { XMFLOAT3(-1.0, -1.0,  1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(0.0, 1.0) },  	
+        { XMFLOAT3(-1.0, -1.0,  1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(0.0, 1.0) },  	
+        { XMFLOAT3(1.0, -1.0, -1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(1.0, 0.0) },  	
+        { XMFLOAT3(1.0, -1.0,  1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(1.0, 1.0) },	
     };
     
     /*SimpleVertex1 cubeVertices[] =
@@ -281,18 +315,12 @@ HRESULT Application::InitIndexBuffer()
     // Create cube index buffer
     WORD cubeIndices[] =
     {
-        0, 2, 1,    // side 1
-        2, 3, 1,
-        1, 3, 5,    // side 2
-        3, 7, 5,
-        2, 6, 3,    // side 3
-        3, 6, 7,
-        4, 5, 7,    // side 4
-        4, 7, 6,
-        0, 4, 2,    // side 5
-        2, 4, 6,
-        0, 1, 4,    // side 6
-        1, 5, 4,
+        0,1,2 ,3,4,5,
+        6,7,8 ,9,10,11,
+        12,13,14 ,15,16,17,
+        18,19,20 ,21,22,23,
+        24,25,26 ,27,28,29,
+        30,31,32 ,33,34,35
     };
 
     // Create pyramid index buffer

@@ -393,6 +393,7 @@
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="Matrix.h" />
     <CLInclude Include="resource.h" />
+    <ClInclude Include="Structures.h" />
     <ClInclude Include="Vector3D.h" />
     <ResourceCompile Include="DX11 Framework.rc" />
   </ItemGroup>
