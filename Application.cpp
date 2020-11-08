@@ -143,12 +143,12 @@ HRESULT Application::InitShadersAndInputLayout()
     if (FAILED(hr))
         return hr;
 
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"cRage.dds", nullptr, &_pSpecularTexture);
+    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/cRage.dds", nullptr, &_pSpecularTexture);
     if (FAILED(hr)) {
         MessageBox(_hWnd, L"Initialization of specular texture failed", L"Error", MB_ICONERROR);
     }
 
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"cRage.dds", nullptr, &_pDiffuseTexture);
+    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/cRage.dds", nullptr, &_pDiffuseTexture);
     if (FAILED(hr)) {
         MessageBox(_hWnd, L"Initialization of diffuse texture failed", L"Error", MB_ICONERROR);
     }
