@@ -46,7 +46,7 @@ void OBJLoader::CreateIndices(const std::vector<XMFLOAT3>& inVertices,
 		else //if not found, add it to the buffer
 		{
 			outVertices.push_back(vertex.Pos);
-			outTexCoords.push_back(vertex.TexC);
+			outTexCoords.push_back(vertex.TexCoords);
 			outNormals.push_back(vertex.Normal);
 			
 			unsigned short newIndex = (unsigned short)outVertices.size() - 1;
@@ -200,7 +200,7 @@ MeshData OBJLoader::Load(char* filename, ID3D11Device* _pd3dDevice, bool invertT
 			{
 				finalVerts[i].Pos = meshVertices[i];
 				finalVerts[i].Normal = meshNormals[i];
-				finalVerts[i].TexC = meshTexCoords[i];
+				finalVerts[i].TexCoords = meshTexCoords[i];
 			}
 
 			//Put data into vertex and index buffers, then pass the relevant data to the MeshData object.

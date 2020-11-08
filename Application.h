@@ -12,37 +12,6 @@
 
 using namespace DirectX;
 
-struct SimpleVertex1
-{
-    XMFLOAT3 Pos;
-    XMFLOAT4 Color;
-	
-};
-
-struct SimpleVertex
-{
-    XMFLOAT3 Pos;
-	XMFLOAT3 Normal;
-	XMFLOAT2 TexCoords;
-};
-
-struct ConstantBuffer
-{
-	XMMATRIX mWorld;
-	XMMATRIX mView;
-	XMMATRIX mProjection;
-	XMFLOAT4 DiffuseMtrl;
-	XMFLOAT4 DiffuseLight;
-	XMFLOAT4 AmbientMtrl;
-	XMFLOAT4 AmbientLight;
-	XMFLOAT4 SpecularMtrl;
-	XMFLOAT4 SpecularLight;
-	float specularPower;
-	XMFLOAT3 EyePos;
-	XMFLOAT3 LightVec3;
-
-};
-
 class Application
 {
 private:
