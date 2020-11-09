@@ -67,6 +67,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         return E_FAIL;
     }
 
+    objMeshData = OBJLoader::Load("assets/sphere.obj", _pd3dDevice, false);
+
 	// Initialize the world matrix
     for (int i = 0; i < 110; i++)
     {
@@ -89,7 +91,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
 
     lightDirection = XMFLOAT3(0.25f, 0.5f, -1.0f);
-    diffuseMaterial = XMFLOAT4(0.9f, 0.2f, 0.6f, 1.0f);
+    diffuseMaterial = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     diffuseLight = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     ambientLight = XMFLOAT4(0.2f, 0.2f, 0.2f, 0.2f);
     ambientMaterial = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -139,16 +141,17 @@ HRESULT Application::InitShadersAndInputLayout()
 	// Create the pixel shader
 	hr = _pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &_pPixelShader);
 	pPSBlob->Release();
+	pPSBlob->Release();
 
     if (FAILED(hr))
         return hr;
 
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/cRage.dds", nullptr, &_pSpecularTexture);
+    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/crate/Crate_NRM.dds", nullptr, &_pSpecularTexture);
     if (FAILED(hr)) {
         MessageBox(_hWnd, L"Initialization of specular texture failed", L"Error", MB_ICONERROR);
     }
 
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/cRage.dds", nullptr, &_pDiffuseTexture);
+    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/crate/Crate_COLOR.dds", nullptr, &_pDiffuseTexture);
     if (FAILED(hr)) {
         MessageBox(_hWnd, L"Initialization of diffuse texture failed", L"Error", MB_ICONERROR);
     }
@@ -756,20 +759,20 @@ void Application::Draw()
         {
             //_pImmediateContext->IASetVertexBuffers(0, 1, &_pPlaneVertexBuffer, &stride, &offset);
             //_pImmediateContext->IASetIndexBuffer(_pPlaneIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-            _pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+            _pImmediateContext->IASetVertexBuffers(0, 1, &objMeshData.VertexBuffer, &stride, &offset);
+            _pImmediateContext->IASetIndexBuffer(objMeshData.IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
         }
         else if (i > 5)
         {
-            _pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+            //_pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
+            //_pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
         }
         else
         {
             //_pImmediateContext->IASetVertexBuffers(0, 1, &_pPyramidVertexBuffer, &stride, &offset);
             //_pImmediateContext->IASetIndexBuffer(_pPyramidIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-            _pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+            //_pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
+           // _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
         }
         
         XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
@@ -808,7 +811,7 @@ void Application::Draw()
         _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture);
         _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture);
         _pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
-        _pImmediateContext->DrawIndexed(36, 0, 0);
+        _pImmediateContext->DrawIndexed(objMeshData.IndexCount, 0, 0);
     }
 
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);

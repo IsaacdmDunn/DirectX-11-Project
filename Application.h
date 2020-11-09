@@ -9,6 +9,7 @@
 #include <vector>
 #include "Vector3D.h"
 #include "Structures.h"
+#include "OBJLoader.h" 
 
 using namespace DirectX;
 
@@ -52,6 +53,7 @@ private:
 	ID3D11ShaderResourceView* _pSpecularTexture = nullptr;
 	ID3D11SamplerState* _pSamplerLinear = nullptr;
 
+	MeshData objMeshData;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

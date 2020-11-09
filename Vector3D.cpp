@@ -95,7 +95,12 @@ vector3d vector3d::cross_product(const vector3d& vec)
 
 vector3d vector3d::normalization()
 {
-	//TO DO
+	float unitVector = sqrt((x * x) + (y * y) + (z * z));
+
+	x = x / unitVector;
+	y = y / unitVector;
+	z = z / unitVector;
+
 	return vector3d();
 }
 
@@ -111,14 +116,12 @@ void vector3d::ComputeNormal(const vector3d& p0, const vector3d& p1, const vecto
 
 float vector3d::square(const vector3d& vec)
 {
-	//TO DO
-	return 0.0f;
+	return (sqrt(vec.x), sqrt(vec.y), sqrt(vec.z));
 }
 
 float vector3d::distance(const vector3d& vec)
 {
-	//TO DO
-	return 0.0f;
+	return (vec.x-x, vec.y-y, vec.z-z);
 }
 
 float vector3d::magnitude(const vector3d& vec)
