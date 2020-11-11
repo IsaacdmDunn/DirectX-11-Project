@@ -79,17 +79,20 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         _worldMatrices.push_back(world);
     }
 
-    // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -25.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-    //float gTime
+ //   // Initialize the view matrix
+	//XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -25.0f, 0.0f);
+	//XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	//XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+ //   //float gTime
 
-	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(Eye, At, Up));
+	//XMStoreFloat4x4(&_view, XMMatrixLookAtLH(Eye, At, Up));
 
-    // Initialize the projection matrix
-	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
+ //   // Initialize the projection matrix
+	//XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
 
+    cam1 = new Camera(XMFLOAT3(0.0f, 3.0f, -25.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+   
+    
     lightDirection = XMFLOAT3(0.25f, 0.5f, -1.0f);
     diffuseMaterial = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     diffuseLight = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -98,7 +101,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     specularLight = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
     specularMaterial = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
     specularPower = 10.0f;
-    eye = Eye;
+    eye = XMVectorSet(0.0f, 3.0f, -25.0f, 0.0f);
 
 	return S_OK;
 }
@@ -774,7 +777,8 @@ void Application::Draw()
             //_pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
            // _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
         }
-        
+        _view = cam1->getViewMatrix();
+        _projection = cam1->getProjectionMatrix();
         XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
         XMMATRIX view = XMLoadFloat4x4(&_view);
         XMMATRIX projection = XMLoadFloat4x4(&_projection);

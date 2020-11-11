@@ -10,6 +10,7 @@
 #include "Vector3D.h"
 #include "Structures.h"
 #include "OBJLoader.h" 
+#include "Camera.h" 
 
 using namespace DirectX;
 
@@ -67,6 +68,8 @@ private:
 	UINT _WindowHeight;
 	UINT _WindowWidth;
 
+	Camera* cam1;
+
 public:
 	Application();
 	~Application();
@@ -88,5 +91,7 @@ public:
 	XMFLOAT4 specularMaterial;
 	float specularPower;
 	XMVECTOR eye;
+
+	
 };
 

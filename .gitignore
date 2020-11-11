@@ -30,3 +30,5 @@
 *.exe
 *.out
 *.app
+*.ipch
+.vs/DX11 Framework/v16/ipch/AutoPCH/e280cd064dc5ff16/APPLICATION.ipch

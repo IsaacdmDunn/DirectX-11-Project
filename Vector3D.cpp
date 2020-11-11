@@ -110,8 +110,6 @@ void vector3d::ComputeNormal(const vector3d& p0, const vector3d& p1, const vecto
 	vector3d v = { p2.x - p0.x, p2.y - p0.y, p2.z - p0.z };
 
 	out = { u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z, u.x * v.y - u.y * v.x };
-	
-	//return vector3d(out.x, out.y, out.z);
 }
 
 float vector3d::square(const vector3d& vec)
