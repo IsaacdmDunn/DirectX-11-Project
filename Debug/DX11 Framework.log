@@ -1,19 +1,33 @@
 ﻿  Application.cpp
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(93,14): warning C4324: 'Application': structure was padded due to alignment specifier
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(93,123): warning C4244: 'argument': conversion from 'UINT' to 'FLOAT', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(93,109): warning C4244: 'argument': conversion from 'UINT' to 'FLOAT', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(93,152): warning C4316: 'Camera': object allocated on the heap may not be aligned 16
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(676,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(681,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(683,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(688,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(690,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(699,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(94,14): warning C4324: 'Application': structure was padded due to alignment specifier
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(93,125): warning C4244: 'argument': conversion from 'UINT' to 'FLOAT', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(93,111): warning C4244: 'argument': conversion from 'UINT' to 'FLOAT', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(93,154): warning C4316: 'Camera': object allocated on the heap may not be aligned 16
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(94,125): warning C4244: 'argument': conversion from 'UINT' to 'FLOAT', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(94,111): warning C4244: 'argument': conversion from 'UINT' to 'FLOAT', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(94,154): warning C4316: 'Camera': object allocated on the heap may not be aligned 16
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(701,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(706,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(708,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(713,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(715,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(723,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(729,30): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(730,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(737,65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(731,13): warning C4189: 'v1': local variable is initialized but not referenced
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(724,60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(738,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(740,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(748,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(754,30): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(755,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(762,65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(756,13): warning C4189: 'v1': local variable is initialized but not referenced
+  Camera.cpp
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Camera.cpp(39,45): warning C4100: 'z': unreferenced formal parameter
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Camera.cpp(39,38): warning C4100: 'y': unreferenced formal parameter
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Camera.cpp(39,31): warning C4100: 'x': unreferenced formal parameter
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Camera.cpp(43,43): warning C4100: 'z': unreferenced formal parameter
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Camera.cpp(43,36): warning C4100: 'y': unreferenced formal parameter
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Camera.cpp(43,29): warning C4100: 'x': unreferenced formal parameter
+  DX11 Framework.cpp
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(94,14): warning C4324: 'Application': structure was padded due to alignment specifier
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\DX11 Framework.cpp(8,42): warning C4316: 'Application': object allocated on the heap may not be aligned 16
+  Generating Code...
   DX11 Framework.vcxproj -> C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Debug\DX11 Framework.exe

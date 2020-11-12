@@ -68,7 +68,8 @@ private:
 	UINT _WindowHeight;
 	UINT _WindowWidth;
 
-	Camera* cam1;
+	Camera* cam[2];
+	int currentCam;
 
 public:
 	Application();

@@ -89,8 +89,9 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
  //   // Initialize the projection matrix
 	//XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
-
-    cam1 = new Camera(XMFLOAT3(0.0f, 3.0f, -25.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+    currentCam = 0;
+    cam[0] = new Camera(XMFLOAT3(0.0f, 3.0f, -25.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+    cam[1] = new Camera(XMFLOAT3(0.0f, 1.0f, -10.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
    
     
     lightDirection = XMFLOAT3(0.25f, 0.5f, -1.0f);
@@ -640,10 +641,34 @@ void Application::Update()
 
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
     }
-
-    if (GetKeyState('A') & 0x8000)
+    cam[0]->Update();
+    if (GetKeyState('1') & 0x8000)
     {
-        //lightDirection = XMFLOAT3(rand() % 20 - 10, 0.5f, rand() % 20 - 10);
+        currentCam = 0;
+    }
+    else if (GetKeyState('2') & 0x8000)
+    {
+        currentCam = 1;
+    }
+    else if (GetKeyState('W') & 0x8000)
+    {
+        cam[0]->Update();
+        //cam[1]->Update(XMFLOAT3(0.0f, 0.0, 1.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+    }
+    else if (GetKeyState('A') & 0x8000)
+    {
+        cam[0]->Update();
+        //cam[1]->Update(XMFLOAT3(-1.0f, 0.0, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+    }
+    else if (GetKeyState('S') & 0x8000)
+    {
+        cam[0]->Update();
+        //cam[1]->Update(XMFLOAT3(0.0f, 0.0, -1.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+    }
+    else if (GetKeyState('D') & 0x8000)
+    {
+        cam[0]->Update();
+        //cam[1]->Update(XMFLOAT3(1.0f, 0.0, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
     }
 
     gTime = t;
@@ -777,8 +802,8 @@ void Application::Draw()
             //_pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
            // _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
         }
-        _view = cam1->getViewMatrix();
-        _projection = cam1->getProjectionMatrix();
+        _view = cam[currentCam]->getViewMatrix();
+        _projection = cam[currentCam]->getProjectionMatrix();
         XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
         XMMATRIX view = XMLoadFloat4x4(&_view);
         XMMATRIX projection = XMLoadFloat4x4(&_projection);
