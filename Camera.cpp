@@ -17,8 +17,17 @@ Camera::~Camera()
 	
 }
 
-void Camera::Update()
+void Camera::Update(float x, float y, float z)
 {
+	_eye += XMVectorSet(x, y, z, 0.0f);
+	_at += XMVectorSet(x,y,z, 0.0f);
+	_up = XMVectorSet(0,1,0, 0.0f);
+
+	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(_eye, _at, _up));
+
+	// Initialize the projection matrix
+	//XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, windowWidth / (FLOAT)windowHeight, nearDepth, farDepth));
+
 }
 
 void Camera::InitCamera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT

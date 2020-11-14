@@ -641,7 +641,6 @@ void Application::Update()
 
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
     }
-    cam[0]->Update();
     if (GetKeyState('1') & 0x8000)
     {
         currentCam = 0;
@@ -652,23 +651,19 @@ void Application::Update()
     }
     else if (GetKeyState('W') & 0x8000)
     {
-        cam[0]->Update();
-        //cam[1]->Update(XMFLOAT3(0.0f, 0.0, 1.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+        cam[0]->Update(0,0,.1);
     }
     else if (GetKeyState('A') & 0x8000)
     {
-        cam[0]->Update();
-        //cam[1]->Update(XMFLOAT3(-1.0f, 0.0, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+        cam[0]->Update(-.1,0,0);
     }
     else if (GetKeyState('S') & 0x8000)
     {
-        cam[0]->Update();
-        //cam[1]->Update(XMFLOAT3(0.0f, 0.0, -1.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+        cam[0]->Update(0,0,-.1);
     }
     else if (GetKeyState('D') & 0x8000)
     {
-        cam[0]->Update();
-        //cam[1]->Update(XMFLOAT3(1.0f, 0.0, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+        cam[0]->Update(.1, 0, 0);
     }
 
     gTime = t;

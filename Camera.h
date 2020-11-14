@@ -33,7 +33,7 @@ public:
 
 	// update function to make the current view and projection 
 // matrices
-	void Update();
+	void Update(float x, float y, float z);
 	void InitCamera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT
 		windowWidth, FLOAT windowHeight, FLOAT
 		nearDepth, FLOAT farDepth);
