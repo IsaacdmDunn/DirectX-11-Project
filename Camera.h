@@ -1,58 +1,78 @@
 #pragma once
-#include "Structures.h"
 
-class Camera
-{
-private:
-	// Private attributes to store the camera position and view 
-	// volume
+#include <d3d11.h>
+#include <DirectXMath.h>
 
-	XMVECTOR _eye;
-	XMVECTOR _at;
-	XMVECTOR _up;
+using namespace DirectX;
 
-	FLOAT _windowWidth;
-	FLOAT _windowHeight;
-	FLOAT _nearDepth;
-	FLOAT _farDepth;
-
-	// attributes to hold the view and projection matrices which 
-	// will be passed to the shader
-
-	XMFLOAT4X4 _view;
-	XMFLOAT4X4 _projection;
-
+class Camera {
 public:
-
-	//Constructor and destructor for the camera
-
-	Camera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT
-		windowWidth, FLOAT windowHeight, FLOAT
-		nearDepth, FLOAT farDepth);
+	Camera();
 	~Camera();
 
-	// update function to make the current view and projection 
-// matrices
-	void Update(float x, float y, float z);
-	void InitCamera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT
-		windowWidth, FLOAT windowHeight, FLOAT
-		nearDepth, FLOAT farDepth);
-	void MoveCameraTo(int x, int y, int z);
-	void MoveCamera(int x, int y, int z);
+	//Get/Set World Position
+	XMVECTOR GetPositionXM() const;
+	XMFLOAT3 GetPosition() const;
+	void SetPosition(float x, float y, float z);
+	void SetPosition(const XMFLOAT3& val);
 
-	// you will need a set of functions to set and return the 
-// position, lookat and up attributes
-	vector3d GetPos();
-	vector3d GetAt();
-	vector3d GetUp();
-		// You will need functions to get the View, Projection and 
-	// combined ViewProjection matrices
+	//Get Camera basis vectors
+	XMVECTOR GetRightXM() const;
+	XMFLOAT3 GetRight() const;
+	XMVECTOR GetUpXM() const;
+	XMFLOAT3 GetUp() const;
+	XMVECTOR GetLookXM() const;
+	XMFLOAT3 GetLook() const;
 
-		// A function to reshape the camera volume if the window is 
-	// resized.
-		void Reshape(FLOAT windowWidth, FLOAT windowHeight, FLOAT
-			nearDepth, FLOAT farDepth);
-		XMFLOAT4X4 getViewMatrix();
-		XMFLOAT4X4 getProjectionMatrix();
+	//Get frustum properties
+	float GetNearZ() const;
+	float GetFarZ() const;
+	float GetAspect() const;
+	float GetFovY() const;
+	float GetFovX() const;
+
+	//Get near and far plane dimensions in view space coordinates
+	float GetNearWindowHeight() const;
+	float GetNearWindowWidth() const;
+	float GetFarWindowHeight() const;
+	float GetFarWindowWidth() const;
+
+	//Set frustum
+	void SetLens(float fovY, float aspect, float zn, float zf);
+
+	//Look at targets
+	void LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp);
+	void LookAt(const XMFLOAT3& pos, const XMFLOAT3& target, const XMFLOAT3& up = XMFLOAT3(0.0f, 1.0f, 0.0f));
+
+	//Get View/Proj matrices
+	XMMATRIX View() const;
+	XMMATRIX Proj() const;
+	XMMATRIX ViewProj() const;
+
+	//Strafe and Walk
+	void Strafe(float d);
+	void Walk(float d);
+
+	//Rotate the camera
+	void Pitch(float angle);
+	void RotateY(float angle);
+
+	//After modifying any camera aspects you need to update the view matrix
+	void UpdateViewMatrix();
+
+private:
+	XMFLOAT3 mPosition;
+	XMFLOAT3 mRight;
+	XMFLOAT3 mUp;
+	XMFLOAT3 mLook;
+
+	float mNearZ;
+	float mFarZ;
+	float mAspect;
+	float mFovY;
+	float mNearWindowHeight;
+	float mFarWindowHeight;
+
+	XMFLOAT4X4 mView;
+	XMFLOAT4X4 mProj;
 };
-

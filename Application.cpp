@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "DDSTextureLoader.h"
+#include <time.h>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -45,6 +46,8 @@ Application::Application()
 
 Application::~Application()
 {
+    delete cam;
+    cam = nullptr;
 	Cleanup();
 }
 
@@ -78,20 +81,15 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
         _worldMatrices.push_back(world);
     }
-
- //   // Initialize the view matrix
-	//XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -25.0f, 0.0f);
-	//XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	//XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
- //   //float gTime
-
-	//XMStoreFloat4x4(&_view, XMMatrixLookAtLH(Eye, At, Up));
-
- //   // Initialize the projection matrix
-	//XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
+    
     currentCam = 0;
-    cam[0] = new Camera(XMFLOAT3(0.0f, 3.0f, -25.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
-    cam[1] = new Camera(XMFLOAT3(0.0f, 1.0f, -10.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), _WindowWidth, _WindowHeight, 0.01f, 100.0f);
+    cam = new Camera();
+    cam->LookAt(
+        XMFLOAT3(0.0f, 3.0f, -23.0f),
+        XMFLOAT3(0.0f, 0.0f, 0.0f)
+    );
+
+    cam->UpdateViewMatrix();
    
     
     lightDirection = XMFLOAT3(0.25f, 0.5f, -1.0f);
@@ -102,7 +100,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     specularLight = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
     specularMaterial = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
     specularPower = 10.0f;
-    eye = XMVectorSet(0.0f, 3.0f, -25.0f, 0.0f);
+    eye = cam->GetPositionXM();
 
 	return S_OK;
 }
@@ -621,9 +619,6 @@ void Application::Cleanup()
 
 void Application::Update()
 {
-
-
-
     // Update our time
     static float t = 0.0f;
 
@@ -649,22 +644,36 @@ void Application::Update()
     {
         currentCam = 1;
     }
-    else if (GetKeyState('W') & 0x8000)
+    if (GetKeyState('W') & 0x8000)
     {
-        cam[0]->Update(0,0,.1);
-    }
-    else if (GetKeyState('A') & 0x8000)
-    {
-        cam[0]->Update(-.1,0,0);
+        cam->Walk(1.0f);
     }
     else if (GetKeyState('S') & 0x8000)
     {
-        cam[0]->Update(0,0,-.1);
+        cam->Walk(-1.0f);
+    }
+    if (GetKeyState('A') & 0x8000)
+    {
+        cam->Strafe(-1.0f);
     }
     else if (GetKeyState('D') & 0x8000)
     {
-        cam[0]->Update(.1, 0, 0);
+        cam->Strafe(1.0f);
     }
+    else if (GetKeyState('Q') & 0x8000)
+    {
+        cam->RotateY(-.02f);
+    }
+    else if (GetKeyState('E') & 0x8000)
+    {
+        cam->RotateY(.02f);
+    }
+    //cam[0]->SetLens(0.25f * 3.1452, _WindowWidth / _WindowHeight, 1.0f, 1000.0f);
+
+    //
+    
+    //cam->LookAt( XMFLOAT3(0.0f, 8.0f, -15.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    cam->UpdateViewMatrix();
 
     gTime = t;
 
@@ -780,25 +789,11 @@ void Application::Draw()
         UINT offset = 0;
         if (i == 109)
         {
-            //_pImmediateContext->IASetVertexBuffers(0, 1, &_pPlaneVertexBuffer, &stride, &offset);
-            //_pImmediateContext->IASetIndexBuffer(_pPlaneIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
             _pImmediateContext->IASetVertexBuffers(0, 1, &objMeshData.VertexBuffer, &stride, &offset);
             _pImmediateContext->IASetIndexBuffer(objMeshData.IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
         }
-        else if (i > 5)
-        {
-            //_pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
-            //_pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-        }
-        else
-        {
-            //_pImmediateContext->IASetVertexBuffers(0, 1, &_pPyramidVertexBuffer, &stride, &offset);
-            //_pImmediateContext->IASetIndexBuffer(_pPyramidIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-            //_pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
-           // _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-        }
-        _view = cam[currentCam]->getViewMatrix();
-        _projection = cam[currentCam]->getProjectionMatrix();
+       // _view = cam[currentCam]->View();
+       // _projection = cam[currentCam]->Projection();
         XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
         XMMATRIX view = XMLoadFloat4x4(&_view);
         XMMATRIX projection = XMLoadFloat4x4(&_projection);
@@ -806,8 +801,8 @@ void Application::Draw()
         // Update variables
         //
         ConstantBuffer cb;
-        cb.mView = XMMatrixTranspose(view);
-        cb.mProjection = XMMatrixTranspose(projection);
+        cb.mView = XMMatrixTranspose(cam->View());
+        cb.mProjection = XMMatrixTranspose(cam->Proj());
         cb.mWorld = XMMatrixTranspose(world);
 
         cb.DiffuseMtrl = diffuseMaterial;
