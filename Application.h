@@ -54,7 +54,7 @@ private:
 	ID3D11ShaderResourceView* _pSpecularTexture = nullptr;
 	ID3D11SamplerState* _pSamplerLinear = nullptr;
 
-	MeshData objMeshData;
+	MeshData objMeshData[3];
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

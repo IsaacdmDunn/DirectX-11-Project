@@ -70,7 +70,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         return E_FAIL;
     }
 
-    objMeshData = OBJLoader::Load("assets/sphere.obj", _pd3dDevice, false);
+    objMeshData[0] = OBJLoader::Load("assets/sphere.obj", _pd3dDevice, false);
+    objMeshData[1] = OBJLoader::Load("assets/donut.obj", _pd3dDevice, false);
 
 	// Initialize the world matrix
     for (int i = 0; i < 110; i++)
@@ -787,10 +788,15 @@ void Application::Draw()
         // Set vertex buffer
         UINT stride = sizeof(SimpleVertex);
         UINT offset = 0;
-        if (i == 109)
+        if (i < 9)
         {
-            _pImmediateContext->IASetVertexBuffers(0, 1, &objMeshData.VertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(objMeshData.IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+            _pImmediateContext->IASetVertexBuffers(0, 1, &objMeshData[0].VertexBuffer, &stride, &offset);
+            _pImmediateContext->IASetIndexBuffer(objMeshData[0].IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+        }
+        else 
+        { 
+            _pImmediateContext->IASetVertexBuffers(0, 1, &objMeshData[1].VertexBuffer, &stride, &offset);
+            _pImmediateContext->IASetIndexBuffer(objMeshData[1].IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
         }
        // _view = cam[currentCam]->View();
        // _projection = cam[currentCam]->Projection();
@@ -830,7 +836,14 @@ void Application::Draw()
         _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture);
         _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture);
         _pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
-        _pImmediateContext->DrawIndexed(objMeshData.IndexCount, 0, 0);
+        if (i < 9)
+        {
+            _pImmediateContext->DrawIndexed(objMeshData[0].IndexCount, 0, 0);
+        }
+        else
+        {
+            _pImmediateContext->DrawIndexed(objMeshData[1].IndexCount, 0, 0);
+        }
     }
 
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
