@@ -50,11 +50,12 @@ private:
 	ID3D11ShaderResourceView* CubesTexture;
 	ID3D11SamplerState* CubesTexSamplerState;
 
-	ID3D11ShaderResourceView* _pDiffuseTexture = nullptr;
-	ID3D11ShaderResourceView* _pSpecularTexture = nullptr;
+	ID3D11ShaderResourceView* _pDiffuseTexture[6];
+	ID3D11ShaderResourceView* _pSpecularTexture[6];
 	ID3D11SamplerState* _pSamplerLinear = nullptr;
 
 	MeshData objMeshData[3];
+	std::vector<ID3D11ShaderResourceView*> mTextures;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
