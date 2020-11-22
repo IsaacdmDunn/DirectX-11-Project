@@ -11,6 +11,7 @@
 #include "Structures.h"
 #include "OBJLoader.h" 
 #include "Camera.h" 
+#include "GameObject.h" 
 
 using namespace DirectX;
 
@@ -65,6 +66,7 @@ private:
 	HRESULT InitShadersAndInputLayout();
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
+	
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;
@@ -82,7 +84,6 @@ public:
 	void Draw();
 	HRESULT InitWireframeView();
 	HRESULT InitSolidView();
-
 	XMFLOAT3 lightDirection;
 	XMFLOAT4 diffuseMaterial;
 	XMFLOAT4 diffuseLight;
@@ -94,6 +95,6 @@ public:
 	float specularPower;
 	XMVECTOR eye;
 
-	
+	GameObject sphere[109];
 };
 

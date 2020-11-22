@@ -69,13 +69,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
         return E_FAIL;
     }
-
-    objMeshData[0] = OBJLoader::Load("assets/sphere.obj", _pd3dDevice, false);
-    objMeshData[1] = OBJLoader::Load("assets/donut.obj", _pd3dDevice, false);
-
+    
 	// Initialize the world matrix
-    for (int i = 0; i < 110; i++)
+    for (int i = 0; i < 108; i++)
     {
+        this->sphere[i].Init(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(5, 5, 5), _pd3dDevice, "assets/sphere.obj");
         XMFLOAT4X4 world;
 
         XMStoreFloat4x4(&world, XMMatrixIdentity());
@@ -86,21 +84,19 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     currentCam = 0;
     cam = new Camera();
     cam->LookAt(
-        XMFLOAT3(0.0f, 3.0f, -23.0f),
-        XMFLOAT3(0.0f, 0.0f, 0.0f)
-    );
+        XMFLOAT3(0.0f, 3.0f, -23.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
 
     cam->UpdateViewMatrix();
-   
+    
     
     lightDirection = XMFLOAT3(0.25f, 0.5f, -1.0f);
     diffuseMaterial = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     diffuseLight = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     ambientLight = XMFLOAT4(0.2f, 0.2f, 0.2f, 0.2f);
-    ambientMaterial = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    ambientMaterial = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
     specularLight = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
     specularMaterial = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
-    specularPower = 10.0f;
+    specularPower = 5.0;
     eye = cam->GetPositionXM();
 
 	return S_OK;
@@ -149,17 +145,50 @@ HRESULT Application::InitShadersAndInputLayout()
     if (FAILED(hr))
         return hr;
 
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/earth_spec.dds", nullptr, &_pSpecularTexture[0]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/earth_col.dds", nullptr, &_pDiffuseTexture[0]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/gas_spec.dds", nullptr, &_pSpecularTexture[1]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/gas_col.dds", nullptr, &_pDiffuseTexture[1]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/sun_spec.dds", nullptr, &_pSpecularTexture[2]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/sun_col.dds", nullptr, &_pDiffuseTexture[2]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/mars_spec.dds", nullptr, &_pSpecularTexture[3]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/mars_col.dds", nullptr, &_pDiffuseTexture[3]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/moon_spec.dds", nullptr, &_pSpecularTexture[4]);
-    hr = CreateDDSTextureFromFile(_pd3dDevice, L"assets/planets/moon_col.dds", nullptr, &_pDiffuseTexture[4]);
-
+    for (int i = 0; i < 108; i++)
+    {
+        if (i == 0)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/sun_col.dds", L"assets/planets/sun_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i == 1)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/earth_col.dds", L"assets/planets/earth_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i == 2)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/mars_col.dds", L"assets/planets/mars_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i == 3)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/gas_col.dds", L"assets/planets/gas_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i == 4)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/mars_col.dds", L"assets/planets/mars_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i == 5)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/moon_col.dds", L"assets/planets/moon_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i == 6)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/moon_col.dds", L"assets/planets/moon_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i == 7)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/moon_col.dds", L"assets/planets/moon_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i == 8)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/gas_col.dds", L"assets/planets/gas_spec.dds", hr, _pd3dDevice);
+        }
+        else if (i > 8)
+        {
+            hr = sphere[i].AddTexture(L"assets/planets/moon_col.dds", L"assets/planets/moon_spec.dds", hr, _pd3dDevice);
+        }
+        
+    }
     // Define the input layout
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
@@ -236,19 +265,6 @@ HRESULT Application::InitVertexBuffer()
         { XMFLOAT3(1.0, -1.0, -1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(1.0, 0.0) },  	
         { XMFLOAT3(1.0, -1.0,  1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(1.0, 1.0) },	
     };
-    
-    /*SimpleVertex1 cubeVertices[] =
-    {
-        { XMFLOAT3( -1.0f, -1.0f, -1.0f ),  XMFLOAT4( 1.0f, 0.0f, 0.0f, 1.0f )  },
-        { XMFLOAT3( 1.0f, -1.0f, -1.0f ),   XMFLOAT4( 0.0f, 1.0f, 0.0f, 1.0f )  },
-        { XMFLOAT3( -1.0f, 1.0f, -1.0f ),   XMFLOAT4( 0.0f, 0.0f, 1.0f, 1.0f )  },
-        { XMFLOAT3( 1.0f, 1.0f, -1.0f ),    XMFLOAT4( 1.0f, 1.0f, 0.0f, 1.0f )  },
-
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f),     XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f)  },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f),      XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f)  },
-        { XMFLOAT3(-1.0f, 1.0f, 1.0f),      XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)  },
-        { XMFLOAT3(1.0f, 1.0f, 1.0f),       XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)  },
-    };*/
 
     // Create vertex buffer
     SimpleVertex1 planeVertices[] =
@@ -614,13 +630,14 @@ void Application::Cleanup()
 
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
-    if (_wireFrame) _wireFrame->Release();
-    if (_solid) _solid->Release();
+   // if (_wireFrame) _wireFrame->Release();
+   // if (_solid) _solid->Release();
 
 }
 
 void Application::Update()
 {
+    
     // Update our time
     static float t = 0.0f;
 
@@ -679,213 +696,101 @@ void Application::Update()
 
     gTime = t / 3;
 
-    //
-    // Animate the cube
-    //
-    InitWireframeView();
 
-    //sun
-    XMMATRIX rotated = XMMatrixIdentity();
-
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(2, 2, 2));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 0));
-    XMStoreFloat4x4(&_worldMatrices[0], rotated);
-
-    //planets
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.65, .65, .65));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 9));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime));
-    XMStoreFloat4x4(&_worldMatrices[1], rotated);
-
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.4, .4, .4));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime *2));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 6));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime *1.5));
-    XMStoreFloat4x4(&_worldMatrices[2], rotated);
-
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(1, 1, 1));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime *.5));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 16));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime *0.5));
-    XMStoreFloat4x4(&_worldMatrices[3], rotated);
-
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.8, .8, .8));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime * .3));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 22));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime * .3));
-    XMStoreFloat4x4(&_worldMatrices[8], rotated);
-
-    //moon
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.2, .2, .2));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 2));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime *3));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 6));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime *1.5));
-    XMStoreFloat4x4(&_worldMatrices[4], rotated);
-
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.25, .25, .25));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 2));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime * 3));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 9));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime));
-    XMStoreFloat4x4(&_worldMatrices[5], rotated);
-
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.4, .4, .4));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 4));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime * 1.5));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 16));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime * 0.5));
-    XMStoreFloat4x4(&_worldMatrices[6], rotated);
-
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.1, .1, .1));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 2.5));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime * 5));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 16));
-    rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime * 0.5));
-    XMStoreFloat4x4(&_worldMatrices[7], rotated);
-
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 108; i++)
     {
-        InitSolidView();
-        float rotationOffset = rand() % 100;
-        float localTranformOffet = (rand() % 30) / 10;
-        int v1 = rand() % 100;
-        rotated = XMMatrixIdentity();
-        rotated = XMMatrixMultiply(rotated, XMMatrixScaling(.05, .05, .05));
-        rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 3 + localTranformOffet));
-        rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime + rotationOffset));
-        rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, 0, 22));
-        rotated = XMMatrixMultiply(rotated, XMMatrixRotationY(gTime * 0.3));
-        XMStoreFloat4x4(&_worldMatrices[i+9], rotated);
+        if (i == 0)
+        {
+            //sun
+            sphere[i].SetScale(2, 2, 2);
+            sphere[i].SetRotation(0, gTime, 0, 0, 0, 0);
+            sphere[i].SetPosition(0, 0, 0, 0, 0, 0);
+            sphere[i].Update();
+        }
+        else if (i == 1)
+        {
+            //earth
+            sphere[i].SetScale(.65, .65, .65);
+            sphere[i].SetRotation(0, gTime, 180, 0, gTime, 0);
+            sphere[i].SetPosition(0, 0, 0, 0, 0, 9);
+            sphere[i].Update();
+        }
+        else if (i == 2)
+        {
+            sphere[i].SetScale(.4, .4, .4);
+            sphere[i].SetRotation(0, gTime * 2, 0, 0, gTime * 1.5, 0);
+            sphere[i].SetPosition(0, 0, 0, 0, 0, 6);
+            sphere[i].Update();
+        }
+        else if (i == 3)
+        {
+            sphere[i].SetScale(1, 1, 1);
+            sphere[i].SetRotation(0, gTime/2, 0, 0, gTime / 2, 0);
+            sphere[i].SetPosition(0, 0, 0, 0, 0, 16);
+            sphere[i].Update();
+        }
+        else if (i == 4)
+        {
+            sphere[i].SetScale(.2, .2, .2);
+            sphere[i].SetRotation(0, gTime*3, 0, 0, gTime * 1.5, 0);
+            sphere[i].SetPosition(0, 0, 2, 0, 0, 6);
+            sphere[i].Update();
+        }
+        else if (i == 5)
+        {
+            sphere[i].SetScale(.25, .25, .25);
+            sphere[i].SetRotation(0, gTime*3, 0, 0, gTime, 0);
+            sphere[i].SetPosition(0, 0, 2, 0, 0, 9);
+            sphere[i].Update();
+        }
+        else if (i == 6)
+        {
+            sphere[i].SetScale(.4, .4, .4);
+            sphere[i].SetRotation(0, gTime*1.5, 0, 0, gTime/2, 0);
+            sphere[i].SetPosition(0, 0, 4, 0, 0, 16);
+            sphere[i].Update();
+        }
+        else if (i == 7)
+        {
+            sphere[i].SetScale(.1, .1, .1);
+            sphere[i].SetRotation(0, gTime*5, 0, 0, gTime/2, 0);
+            sphere[i].SetPosition(0, 0, 2.5, 0, 0, 16);
+            sphere[i].Update();
+        }
+        else if (i == 8)
+        {
+            sphere[i].SetScale(.8, .8, .8);
+            sphere[i].SetRotation(0, gTime/3, 0, 0, gTime / 3, 0);
+            sphere[i].SetPosition(0, 0, 0, 0, 0, 22);
+            sphere[i].Update();
+        }
+        else
+        {
+            float rotationOffset = rand() % 100;
+            float localTranformOffet = (rand() % 30) / 10;
+            
+            sphere[i].SetScale(.05, .05, .05);
+            sphere[i].SetRotation(0, gTime + rotationOffset, 0, 0, gTime/3, 0);
+            sphere[i].SetPosition(0, 0, 3 + localTranformOffet, 0, 0, 22);
+            sphere[i].Update();
+        }
     }
-
-    rotated = XMMatrixIdentity();
-    rotated = XMMatrixMultiply(rotated, XMMatrixScaling(3, 3, 3));
-    rotated = XMMatrixMultiply(rotated, XMMatrixTranslation(0, -5, 0));
-    XMStoreFloat4x4(&_worldMatrices[109], rotated);
 }
 
 void Application::Draw()
 {
+    
     //
     // Clear the back buffer
     //
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
 
-    for (int i = 0; i < 110; i++)
+    for (int i = 0; i < 108; i++)
     {
-        // Set index and vertex buffer
-        // Set vertex buffer
-        UINT stride = sizeof(SimpleVertex);
-        UINT offset = 0;
-        if (i < 9)
-        {
-            _pImmediateContext->IASetVertexBuffers(0, 1, &objMeshData[0].VertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(objMeshData[0].IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-        }
-        else 
-        { 
-            _pImmediateContext->IASetVertexBuffers(0, 1, &objMeshData[1].VertexBuffer, &stride, &offset);
-            _pImmediateContext->IASetIndexBuffer(objMeshData[1].IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-        }
-
-        XMMATRIX world = XMLoadFloat4x4(&_worldMatrices[i]);
-        XMMATRIX view = XMLoadFloat4x4(&_view);
-        XMMATRIX projection = XMLoadFloat4x4(&_projection);
-
-        ConstantBuffer cb;
-        cb.mView = XMMatrixTranspose(cam->View());
-        cb.mProjection = XMMatrixTranspose(cam->Proj());
-        cb.mWorld = XMMatrixTranspose(world);
-
-        cb.DiffuseMtrl = diffuseMaterial;
-        cb.DiffuseLight = diffuseLight;
-        cb.LightVec3 = lightDirection;
-
-        cb.AmbientLight = ambientLight;
-        cb.AmbientMtrl = ambientMaterial;
-
-        cb.SpecularLight = specularLight;
-        cb.SpecularMtrl = specularMaterial;
-        cb.specularPower = specularPower;
-        cb.EyePos = { eye.m128_f32[0], eye.m128_f32[1], eye.m128_f32[2] };
-
-
-        _pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
-
-        //
-        // Renders a triangle
-        //
-        _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
-        _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
-        _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
-        _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
-        _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[1]);
-        _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[1]);
-        _pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
-        if (i == 0)
-        {
-            _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[2]);
-            _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[2]);
-            _pImmediateContext->DrawIndexed(objMeshData[0].IndexCount, 0, 0);
-        }
-        else if (i == 1) 
-        {
-            _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[0]);
-            _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[0]);
-            _pImmediateContext->DrawIndexed(objMeshData[0].IndexCount, 0, 0);
-        }
-        else if (i == 2)
-        {
-            _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[3]);
-            _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[3]);
-            _pImmediateContext->DrawIndexed(objMeshData[0].IndexCount, 0, 0);
-        }
-        else if (i == 3)
-        {
-            _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[1]);
-            _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[1]);
-            _pImmediateContext->DrawIndexed(objMeshData[0].IndexCount, 0, 0);
-        }
-        else if (i == 8)
-        {
-            _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[1]);
-            _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[1]);
-            _pImmediateContext->DrawIndexed(objMeshData[0].IndexCount, 0, 0);
-        }
-        else if (i < 9)
-        {
-
-            _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[4]);
-            _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[4]);
-            _pImmediateContext->DrawIndexed(objMeshData[0].IndexCount, 0, 0);
-        }
-        else if (i > 9 && i < 109)
-        {
-            _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[4]);
-            _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[4]);
-            _pImmediateContext->DrawIndexed(objMeshData[0].IndexCount, 0, 0);
-        }
-        else
-        {
-
-            _pImmediateContext->PSSetShaderResources(0, 1, &_pDiffuseTexture[1]);
-            _pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[1]);
-            _pImmediateContext->DrawIndexed(objMeshData[1].IndexCount, 0, 0);
-        }
+        sphere[i].Draw(cam, _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
     }
-
+    
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     //
