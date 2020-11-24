@@ -12,6 +12,7 @@
 #include "OBJLoader.h" 
 #include "Camera.h" 
 #include "GameObject.h" 
+#include "Player.h"
 
 using namespace DirectX;
 
@@ -96,5 +97,6 @@ public:
 	XMVECTOR eye;
 
 	GameObject sphere[109];
+	Player player;
 };
 

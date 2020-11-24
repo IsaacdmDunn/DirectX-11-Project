@@ -1,12 +1,8 @@
 #include "Camera.h"
 
-Camera::Camera()
-	: mPosition(0.0f,0.0f,0.0f),
-	mRight(1.0f,0.0f,0.0f),
-	mUp(0.0,1.0f,0.0f),
-	mLook(0.0f,0.0f,1.0f)
+Camera::Camera() : mPosition(0.0f,0.0f,0.0f), mRight(1.0f,0.0f,0.0f), mUp(0.0,1.0f,0.0f), mLook(0.0f,0.0f,1.0f)
 {
-	SetLens(0.25f * 3.1452, 1.0f, 1.0f, 1000.0f);
+	SetLens(3.14/4, 1.0f, 1.0f, 1000.0f);
 }
 
 Camera::~Camera()

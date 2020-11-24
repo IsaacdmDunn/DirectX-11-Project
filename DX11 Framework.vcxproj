@@ -386,6 +386,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Vector3D.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -399,6 +400,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="OBJLoader.h" />
+    <ClInclude Include="Player.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Structures.h" />
     <ClInclude Include="Vector3D.h" />

@@ -80,11 +80,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
         _worldMatrices.push_back(world);
     }
+    player.Init(XMFLOAT3(0, 0, -5.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(0,0,0), _pd3dDevice, "assets/rocket.obj");
     
     currentCam = 0;
     cam = new Camera();
-    cam->LookAt(
-        XMFLOAT3(0.0f, 3.0f, -23.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    cam->LookAt(XMFLOAT3(0.0f, 0.0f, -5.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
 
     cam->UpdateViewMatrix();
     
@@ -144,7 +144,7 @@ HRESULT Application::InitShadersAndInputLayout()
 
     if (FAILED(hr))
         return hr;
-
+    hr = player.AddTexture(L"assets/planets/sun_spec.dds", L"assets/planets/sun_spec.dds", hr, _pd3dDevice);
     for (int i = 0; i < 108; i++)
     {
         if (i == 0)
@@ -666,36 +666,48 @@ void Application::Update()
     if (GetKeyState('W') & 0x8000)
     {
         cam->Walk(0.3f);
+        player.MovePlayer(0, 0, 0.3f);
     }
     else if (GetKeyState('S') & 0x8000)
     {
         cam->Walk(-0.3f);
+        player.MovePlayer(0, 0, -0.3f);
     }
     if (GetKeyState('A') & 0x8000)
     {
         cam->Strafe(-0.3f);
+        player.MovePlayer(-0.3f, 0, 0);
     }
     else if (GetKeyState('D') & 0x8000)
     {
         cam->Strafe(0.3f);
+        player.MovePlayer(0.3f,0,0);
+        
     }
     else if (GetKeyState('Q') & 0x8000)
     {
-        cam->RotateY(-.02f);
+        //cam->RotateY(-.02f);
+        player.RotatePlayer(0, -0.02f, 0);
     }
     else if (GetKeyState('E') & 0x8000)
     {
-        cam->RotateY(.02f);
+        //cam->RotateY(.02f);
+        player.RotatePlayer(0, 0.02f, 0);
+
     }
     //cam[0]->SetLens(0.25f * 3.1452, _WindowWidth / _WindowHeight, 1.0f, 1000.0f);
 
     //
     
-    //cam->LookAt( XMFLOAT3(0.0f, 8.0f, -15.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    //cam->LookAt(XMFLOAT3(player.GetPlayerPosition().x, player.GetPlayerPosition().y, player.GetPlayerPosition().z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
     cam->UpdateViewMatrix();
 
     gTime = t / 3;
 
+    player.SetScale(.5, .5, .5);
+    player.SetRotation(0, 0, 0, player.GetPlayerRotation().x, player.GetPlayerRotation().y, player.GetPlayerRotation().z);
+    player.SetPosition(0, -1, 15, player.GetPlayerPosition().x, player.GetPlayerPosition().y, player.GetPlayerPosition().z);
+    player.Update();
 
     for (int i = 0; i < 108; i++)
     {
@@ -785,7 +797,7 @@ void Application::Draw()
     //
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
-
+    player.Draw(cam, _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
     for (int i = 0; i < 108; i++)
     {
         sphere[i].Draw(cam, _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
