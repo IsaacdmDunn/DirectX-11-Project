@@ -671,27 +671,27 @@ void Application::Update()
     else if (GetKeyState('S') & 0x8000)
     {
         cam->Walk(-0.3f);
-        player.MovePlayer(0, 0, -0.3f);
+        //player.MovePlayer(0, 0, -0.3f);
     }
     if (GetKeyState('A') & 0x8000)
     {
         cam->Strafe(-0.3f);
-        player.MovePlayer(-0.3f, 0, 0);
+        //player.MovePlayer(-0.3f, 0, 0);
     }
     else if (GetKeyState('D') & 0x8000)
     {
         cam->Strafe(0.3f);
-        player.MovePlayer(0.3f,0,0);
+        //player.MovePlayer(0.3f,0,0);
         
     }
     else if (GetKeyState('Q') & 0x8000)
     {
-        //cam->RotateY(-.02f);
+        cam->RotateY(-.02f);
         player.RotatePlayer(0, -0.02f, 0);
     }
     else if (GetKeyState('E') & 0x8000)
     {
-        //cam->RotateY(.02f);
+        cam->RotateY(.02f);
         player.RotatePlayer(0, 0.02f, 0);
 
     }
@@ -699,14 +699,14 @@ void Application::Update()
 
     //
     
-    //cam->LookAt(XMFLOAT3(player.GetPlayerPosition().x, player.GetPlayerPosition().y, player.GetPlayerPosition().z), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    //cam->LookAt(XMFLOAT3(0, 0, 0), XMFLOAT3(cam->GetPosition().x, cam->GetPosition().y - 1, cam->GetPosition().z + 15), XMFLOAT3(0.0f, 0.0f, 0.0f));
     cam->UpdateViewMatrix();
 
     gTime = t / 3;
 
-    player.SetScale(.5, .5, .5);
-    player.SetRotation(0, 0, 0, player.GetPlayerRotation().x, player.GetPlayerRotation().y, player.GetPlayerRotation().z);
-    player.SetPosition(0, -1, 15, player.GetPlayerPosition().x, player.GetPlayerPosition().y, player.GetPlayerPosition().z);
+    player.SetScale(.05, .05, .05);
+    player.SetRotation(0, player.GetPlayerRotation().y, 0, 0, cam->GetLook().y, 0);
+    player.SetPosition(0, -.2, 2.5, cam->GetPosition().x, cam->GetPosition().y, cam->GetPosition().z);
     player.Update();
 
     for (int i = 0; i < 108; i++)
