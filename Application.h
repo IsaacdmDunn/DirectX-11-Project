@@ -72,7 +72,7 @@ private:
 	UINT _WindowHeight;
 	UINT _WindowWidth;
 
-	Camera* cam;
+	Camera* cam[5];
 	int currentCam;
 
 public:

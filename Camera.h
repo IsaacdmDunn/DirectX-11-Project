@@ -53,6 +53,8 @@ public:
 	void Strafe(float d);
 	void Walk(float d);
 
+	void Fly(float d);
+
 	//Rotate the camera
 	void Pitch(float angle);
 	void RotateY(float angle);

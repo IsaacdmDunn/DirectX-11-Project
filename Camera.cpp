@@ -180,6 +180,14 @@ void Camera::Walk(float d)
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, i, p));
 }
 
+void Camera::Fly(float d)
+{
+	XMVECTOR s = XMVectorReplicate(d);
+	XMVECTOR i = XMLoadFloat3(&mUp);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, i, p));
+}
+
 void Camera::Pitch(float angle)
 {
 	XMMATRIX r = XMMatrixRotationAxis(XMLoadFloat3(&mRight), angle);

@@ -46,8 +46,11 @@ Application::Application()
 
 Application::~Application()
 {
-    delete cam;
-    cam = nullptr;
+    for (int i = 0; i < 4; i++)
+    {
+        delete cam[i];
+        cam[i] = nullptr;
+    }
 	Cleanup();
 }
 
@@ -83,10 +86,22 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     player.Init(XMFLOAT3(0, 0, -5.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(0,0,0), _pd3dDevice, "assets/rocket.obj");
     
     currentCam = 0;
-    cam = new Camera();
-    cam->LookAt(XMFLOAT3(0.0f, 0.0f, -5.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
 
-    cam->UpdateViewMatrix();
+    cam[0] = new Camera();
+    cam[0]->LookAt(XMFLOAT3(0.0f, 0.0f, -5.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    cam[0]->UpdateViewMatrix();
+
+    cam[1] = new Camera();
+    cam[1]->LookAt(XMFLOAT3(0.0f, 0.0f, -2.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    cam[1]->UpdateViewMatrix();
+
+    cam[2] = new Camera();
+    cam[2]->LookAt(XMFLOAT3(0.0f, 5.0f, -23.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    cam[2]->UpdateViewMatrix();
+
+    cam[3] = new Camera();
+    cam[3]->LookAt(XMFLOAT3(0.0f, 23.0f, 0.00000001f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    cam[3]->UpdateViewMatrix();
     
     
     lightDirection = XMFLOAT3(0.25f, 0.5f, -1.0f);
@@ -97,7 +112,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     specularLight = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
     specularMaterial = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
     specularPower = 5.0;
-    eye = cam->GetPositionXM();
+    eye = cam[currentCam]->GetPositionXM();
 
 	return S_OK;
 }
@@ -663,50 +678,69 @@ void Application::Update()
     {
         currentCam = 1;
     }
+    else if (GetKeyState('3') & 0x8000)
+    {
+        currentCam = 2;
+    }
+    else if (GetKeyState('4') & 0x8000)
+    {
+        currentCam = 3;
+    }
     if (GetKeyState('W') & 0x8000)
     {
-        cam->Walk(0.3f);
-        player.MovePlayer(0, 0, 0.3f);
+        cam[0]->Walk(0.3f);
+        cam[1]->Walk(0.3f);
+        cam[3]->Fly(-0.3f);
+        
     }
     else if (GetKeyState('S') & 0x8000)
     {
-        cam->Walk(-0.3f);
-        //player.MovePlayer(0, 0, -0.3f);
+        cam[0]->Walk(-0.3f);
+        cam[1]->Walk(-0.3f);
+        cam[3]->Fly(0.3f);
     }
     if (GetKeyState('A') & 0x8000)
     {
-        cam->Strafe(-0.3f);
+        cam[0]->Strafe(-0.3f);
+        cam[1]->Strafe(-0.3f);
+        cam[3]->Strafe(0.3f);
         //player.MovePlayer(-0.3f, 0, 0);
     }
     else if (GetKeyState('D') & 0x8000)
     {
-        cam->Strafe(0.3f);
+        cam[0]->Strafe(0.3f);
+        cam[1]->Strafe(0.3f);
+        cam[3]->Strafe(-0.3f);
         //player.MovePlayer(0.3f,0,0);
         
     }
     else if (GetKeyState('Q') & 0x8000)
     {
-        cam->RotateY(-.02f);
+        cam[0]->RotateY(-.02f);
+        cam[1]->RotateY(-.02f);
+        cam[3]->RotateY(-.02f);
         player.RotatePlayer(0, -0.02f, 0);
     }
     else if (GetKeyState('E') & 0x8000)
     {
-        cam->RotateY(.02f);
+        cam[0]->RotateY(.02f);
+        cam[1]->RotateY(.02f);
+        cam[3]->RotateY(.02f);
         player.RotatePlayer(0, 0.02f, 0);
 
     }
-    //cam[0]->SetLens(0.25f * 3.1452, _WindowWidth / _WindowHeight, 1.0f, 1000.0f);
+    //cam[][0]->SetLens(0.25f * 3.1452, _WindowWidth / _WindowHeight, 1.0f, 1000.0f);
 
     //
     
-    //cam->LookAt(XMFLOAT3(0, 0, 0), XMFLOAT3(cam->GetPosition().x, cam->GetPosition().y - 1, cam->GetPosition().z + 15), XMFLOAT3(0.0f, 0.0f, 0.0f));
-    cam->UpdateViewMatrix();
+    //cam[]->LookAt(XMFLOAT3(0, 0, 0), XMFLOAT3(cam[]->GetPosition().x, cam[]->GetPosition().y - 1, cam[]->GetPosition().z + 15), XMFLOAT3(0.0f, 0.0f, 0.0f));
+    cam[currentCam]->UpdateViewMatrix();
 
     gTime = t / 3;
 
     player.SetScale(.05, .05, .05);
-    player.SetRotation(0, player.GetPlayerRotation().y, 0, 0, cam->GetLook().y, 0);
-    player.SetPosition(0, -.2, 2.5, cam->GetPosition().x, cam->GetPosition().y, cam->GetPosition().z);
+    player.SetRotation(0, player.GetPlayerRotation().y, 0, 0, cam[0]->GetLook().y, 0);
+    player.SetPosition(0, -.2, 2.5, cam[0]->GetPosition().x, cam[0]->GetPosition().y, cam[0]->GetPosition().z);
     player.Update();
 
     for (int i = 0; i < 108; i++)
@@ -797,10 +831,10 @@ void Application::Draw()
     //
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
-    player.Draw(cam, _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    player.Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
     for (int i = 0; i < 108; i++)
     {
-        sphere[i].Draw(cam, _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+        sphere[i].Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
     }
     
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
