@@ -69,6 +69,7 @@ void GameObject::Draw(Camera* cam, ID3D11DeviceContext* _pImmediateContext, ID3D
 	_pImmediateContext->PSSetShaderResources(1, 1, &_pSpecularTexture[1]);
 	_pImmediateContext->DrawIndexed(objMeshData.IndexCount, 0, 0);
 	_pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
+
 }
 
 HRESULT GameObject::AddTexture(const wchar_t* colourTexture, const wchar_t* specTexture, HRESULT hr, ID3D11Device* _pd3dDevice)

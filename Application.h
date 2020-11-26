@@ -47,6 +47,7 @@ private:
 	ID3D11RasterizerState* _wireFrame;
 	ID3D11RasterizerState* _solid;
 	bool wireFrameActive = false;
+	bool blendActive = false;
 	float gTime;
 
 	ID3D11ShaderResourceView* CubesTexture;
@@ -55,6 +56,10 @@ private:
 	ID3D11ShaderResourceView* _pDiffuseTexture[6];
 	ID3D11ShaderResourceView* _pSpecularTexture[6];
 	ID3D11SamplerState* _pSamplerLinear = nullptr;
+
+	ID3D11BlendState* Transparency;
+	ID3D11RasterizerState* CCWcullMode;
+	ID3D11RasterizerState* CWcullMode;
 
 	MeshData objMeshData[3];
 	std::vector<ID3D11ShaderResourceView*> mTextures;
@@ -67,7 +72,6 @@ private:
 	HRESULT InitShadersAndInputLayout();
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
-	
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;

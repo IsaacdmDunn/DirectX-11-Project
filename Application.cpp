@@ -225,6 +225,38 @@ HRESULT Application::InitShadersAndInputLayout()
     // Set the input layout
     _pImmediateContext->IASetInputLayout(_pVertexLayout);
 
+    D3D11_BLEND_DESC blendDesc;
+    ZeroMemory(&blendDesc, sizeof(blendDesc));
+
+    D3D11_RENDER_TARGET_BLEND_DESC rtbd;
+    ZeroMemory(&rtbd, sizeof(rtbd));
+
+    rtbd.BlendEnable = true;
+    rtbd.SrcBlend = D3D11_BLEND_SRC_COLOR;
+    rtbd.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+    rtbd.BlendOp = D3D11_BLEND_OP_ADD;
+    rtbd.SrcBlendAlpha = D3D11_BLEND_ONE;
+    rtbd.DestBlendAlpha = D3D11_BLEND_ZERO;
+    rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    rtbd.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+
+    blendDesc.AlphaToCoverageEnable = false;
+    blendDesc.RenderTarget[0] = rtbd;
+
+    _pd3dDevice->CreateBlendState(&blendDesc, &Transparency);
+
+    D3D11_RASTERIZER_DESC cmdesc;
+    ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
+
+    cmdesc.FillMode = D3D11_FILL_SOLID;
+    cmdesc.CullMode = D3D11_CULL_BACK;
+
+    cmdesc.FrontCounterClockwise = true;
+    hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &CCWcullMode);
+
+    cmdesc.FrontCounterClockwise = false;
+    hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &CWcullMode);
+
 	return hr;
 }
 
@@ -645,6 +677,9 @@ void Application::Cleanup()
 
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
+    Transparency->Release();
+    CCWcullMode->Release();
+    CWcullMode->Release();
    // if (_wireFrame) _wireFrame->Release();
    // if (_solid) _solid->Release();
 
@@ -686,32 +721,34 @@ void Application::Update()
     {
         currentCam = 3;
     }
+    else if (GetKeyState('B') & 0x8000)
+    {
+        blendActive = !blendActive;
+    }
     if (GetKeyState('W') & 0x8000)
     {
-        cam[0]->Walk(0.3f);
-        cam[1]->Walk(0.3f);
-        cam[3]->Fly(-0.3f);
+        cam[0]->Walk(0.03f);
+        cam[1]->Walk(0.03f);
+        cam[3]->Fly(-0.03f);
         
     }
     else if (GetKeyState('S') & 0x8000)
     {
-        cam[0]->Walk(-0.3f);
-        cam[1]->Walk(-0.3f);
-        cam[3]->Fly(0.3f);
+        cam[0]->Walk(-0.03f);
+        cam[1]->Walk(-0.03f);
+        cam[3]->Fly(0.03f);
     }
     if (GetKeyState('A') & 0x8000)
     {
-        cam[0]->Strafe(-0.3f);
-        cam[1]->Strafe(-0.3f);
-        cam[3]->Strafe(0.3f);
-        //player.MovePlayer(-0.3f, 0, 0);
+        cam[0]->Strafe(-0.03f);
+        cam[1]->Strafe(-0.03f);
+        cam[3]->Strafe(0.03f);
     }
     else if (GetKeyState('D') & 0x8000)
     {
-        cam[0]->Strafe(0.3f);
-        cam[1]->Strafe(0.3f);
-        cam[3]->Strafe(-0.3f);
-        //player.MovePlayer(0.3f,0,0);
+        cam[0]->Strafe(0.03f);
+        cam[1]->Strafe(0.03f);
+        cam[3]->Strafe(-0.03f);
         
     }
     else if (GetKeyState('Q') & 0x8000)
@@ -736,7 +773,7 @@ void Application::Update()
     //cam[]->LookAt(XMFLOAT3(0, 0, 0), XMFLOAT3(cam[]->GetPosition().x, cam[]->GetPosition().y - 1, cam[]->GetPosition().z + 15), XMFLOAT3(0.0f, 0.0f, 0.0f));
     cam[currentCam]->UpdateViewMatrix();
 
-    gTime = t / 3;
+    gTime = t / 30;
 
     player.SetScale(.05, .05, .05);
     player.SetRotation(0, player.GetPlayerRotation().y, 0, 0, cam[0]->GetLook().y, 0);
@@ -816,8 +853,8 @@ void Application::Update()
             float localTranformOffet = (rand() % 30) / 10;
             
             sphere[i].SetScale(.05, .05, .05);
-            sphere[i].SetRotation(0, gTime + rotationOffset, 0, 0, gTime/3, 0);
-            sphere[i].SetPosition(0, 0, 3 + localTranformOffet, 0, 0, 22);
+            sphere[i].SetRotation(0, gTime + (i/2), 0, 0, gTime/3, 0);
+            sphere[i].SetPosition(0, 0, 3 , 0, 0, 22);
             sphere[i].Update();
         }
     }
@@ -831,12 +868,20 @@ void Application::Draw()
     //
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
+    
     player.Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
     for (int i = 0; i < 108; i++)
     {
+        if (blendActive == true)
+        {
+            float blendFactor[] = { 1.0f, 0.75f, 0.75f, 1.0f };
+            _pImmediateContext->OMSetBlendState(Transparency, blendFactor, 0xffffffff);
+        }
+        
         sphere[i].Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
     }
-    
+    _pImmediateContext->OMSetBlendState(0, 0, 0xffffffff);
+
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     //
