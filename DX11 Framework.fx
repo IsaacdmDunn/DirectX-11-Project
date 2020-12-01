@@ -82,16 +82,21 @@ float4 PS(VS_OUTPUT input) : SV_Target
     float diffuseAmount = max(dot(lightVecW, input.normalW), 0.0f);
     float specularAmount = pow(max(dot(reflection, input.eye), 0), specularPower);
 
-    float3 specular = specularAmount * (specularMat * specularLight).rgb;
+    float3 specular = specularAmount * (specularMat * specularLight).rgba;
     float3 ambient = ambientMat * ambientLight;
-    float3 diffuse = diffuseAmount * (diffuseMat * diffuseLight).rgb;
+    float3 diffuse = diffuseAmount * (diffuseMat * diffuseLight).rgba;
 
     //clamp color values between 0 and 1
-    float4 colour;
+    float4 colour = {1,1,1,1};
     colour.rgb = clamp(diffuse, 0, 1) + ambient + clamp(specular, 0, 1);
     colour.a = diffuseMat.a;
 
     colour *= textureDiffuse.Sample(samplerLinear, input.Tex);
+    if (colour.a < 0.1f) 
+    {
+        clip(colour.a - 0.1f);
+    }
+    
 
     return colour;
 }

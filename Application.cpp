@@ -84,6 +84,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         _worldMatrices.push_back(world);
     }
     player.Init(XMFLOAT3(0, 0, -5.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(0,0,0), _pd3dDevice, "assets/rocket.obj");
+    cube.Init(XMFLOAT3(0, 5, -5.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(0,0,0), _pd3dDevice, "assets/cube.obj");
     
     currentCam = 0;
 
@@ -160,6 +161,7 @@ HRESULT Application::InitShadersAndInputLayout()
     if (FAILED(hr))
         return hr;
     hr = player.AddTexture(L"assets/planets/sun_spec.dds", L"assets/planets/sun_spec.dds", hr, _pd3dDevice);
+    hr = cube.AddTexture(L"assets/cRage.dds", L"assets/cRage.dds", hr, _pd3dDevice);
     for (int i = 0; i < 108; i++)
     {
         if (i == 0)
@@ -690,7 +692,8 @@ void Application::Update()
     
     // Update our time
     static float t = 0.0f;
-
+    bool speedMultipler = true;
+    float speed = 0.3f;
     if (_driverType == D3D_DRIVER_TYPE_REFERENCE)
     {
         t += (float) XM_PI * 0.0125f;
@@ -704,6 +707,18 @@ void Application::Update()
             dwTimeStart = dwTimeCur;
 
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
+    }
+    if (speedMultipler)
+    {
+        speed = 0.06f;
+    }
+    else
+    {
+        speed = 0.03f;
+    }
+    if (GetKeyState('h') & 0x8000)
+    {
+        //speedMultipler = !speedMultipler;
     }
     if (GetKeyState('1') & 0x8000)
     {
@@ -727,28 +742,28 @@ void Application::Update()
     }
     if (GetKeyState('W') & 0x8000)
     {
-        cam[0]->Walk(0.03f);
-        cam[1]->Walk(0.03f);
-        cam[3]->Fly(-0.03f);
+        cam[0]->Walk(speed);
+        cam[1]->Walk(speed);
+        cam[3]->Fly(-speed);
         
     }
     else if (GetKeyState('S') & 0x8000)
     {
-        cam[0]->Walk(-0.03f);
-        cam[1]->Walk(-0.03f);
-        cam[3]->Fly(0.03f);
+        cam[0]->Walk(-speed);
+        cam[1]->Walk(-speed);
+        cam[3]->Fly(speed);
     }
     if (GetKeyState('A') & 0x8000)
     {
-        cam[0]->Strafe(-0.03f);
-        cam[1]->Strafe(-0.03f);
-        cam[3]->Strafe(0.03f);
+        cam[0]->Strafe(-speed);
+        cam[1]->Strafe(-speed);
+        cam[3]->Strafe(speed);
     }
     else if (GetKeyState('D') & 0x8000)
     {
-        cam[0]->Strafe(0.03f);
-        cam[1]->Strafe(0.03f);
-        cam[3]->Strafe(-0.03f);
+        cam[0]->Strafe(speed);
+        cam[1]->Strafe(speed);
+        cam[3]->Strafe(-speed);
         
     }
     else if (GetKeyState('Q') & 0x8000)
@@ -780,8 +795,14 @@ void Application::Update()
     player.SetPosition(0, -.2, 2.5, cam[0]->GetPosition().x, cam[0]->GetPosition().y, cam[0]->GetPosition().z);
     player.Update();
 
+    
+
     for (int i = 0; i < 108; i++)
     {
+        cube.SetScale(1, 1, 1);
+        cube.SetRotation(gTime, gTime, gTime, 0, 0, 0);
+        cube.SetPosition(0, 0, -5, 0, 0, 0);
+        cube.Update();
         if (i == 0)
         {
             //sun
@@ -870,8 +891,10 @@ void Application::Draw()
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
     
     player.Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    cube.Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
     for (int i = 0; i < 108; i++)
     {
+
         if (blendActive == true)
         {
             float blendFactor[] = { 1.0f, 0.75f, 0.75f, 1.0f };

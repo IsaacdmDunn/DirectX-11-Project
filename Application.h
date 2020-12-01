@@ -102,5 +102,6 @@ public:
 
 	GameObject sphere[109];
 	Player player;
+	GameObject cube;
 };
 
