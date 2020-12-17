@@ -10,6 +10,7 @@
 
 using namespace DirectX;
 
+//simple vertex for mesh data
 struct SimpleVertex
 {
 	XMFLOAT3 Pos;
@@ -22,17 +23,11 @@ struct SimpleVertex
 	};
 };
 
-struct SimpleVertex1
-{
-	XMFLOAT3 Pos;
-	XMFLOAT4 Color;
-
-};
-
+//constant buffer
 struct ConstantBuffer
 {
 	XMMATRIX mWorld;
-	XMMATRIX mView;
+	XMMATRIX _view;
 	XMMATRIX mProjection;
 	XMFLOAT4 DiffuseMtrl;
 	XMFLOAT4 DiffuseLight;

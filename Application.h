@@ -9,7 +9,6 @@
 #include <vector>
 #include "Vector3D.h"
 #include "Structures.h"
-#include "OBJLoader.h" 
 #include "Camera.h" 
 #include "GameObject.h" 
 #include "Player.h"
@@ -46,9 +45,9 @@ private:
 	ID3D11Texture2D* _depthStencilBuffer;
 	ID3D11RasterizerState* _wireFrame;
 	ID3D11RasterizerState* _solid;
-	bool wireFrameActive = false;
-	bool blendActive = false;
-	float gTime;
+	bool _wireFrameActive = false;
+	bool _blendActive = false;
+	float _gTime;
 
 	ID3D11ShaderResourceView* CubesTexture;
 	ID3D11SamplerState* CubesTexSamplerState;
@@ -57,12 +56,18 @@ private:
 	ID3D11ShaderResourceView* _pSpecularTexture[6];
 	ID3D11SamplerState* _pSamplerLinear = nullptr;
 
-	ID3D11BlendState* Transparency;
-	ID3D11RasterizerState* CCWcullMode;
-	ID3D11RasterizerState* CWcullMode;
+	ID3D11BlendState* _transparency;
+	ID3D11RasterizerState* _CCWcullMode;
+	ID3D11RasterizerState* _CWcullMode;
 
-	MeshData objMeshData[3];
-	std::vector<ID3D11ShaderResourceView*> mTextures;
+	MeshData _objMeshData[3];
+	std::vector<ID3D11ShaderResourceView*> _textures;
+
+	UINT _WindowHeight;
+	UINT _WindowWidth;
+
+	Camera* _cam[5];
+	int _currentCam;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
@@ -73,11 +78,7 @@ private:
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
 
-	UINT _WindowHeight;
-	UINT _WindowWidth;
-
-	Camera* cam[5];
-	int currentCam;
+	
 
 public:
 	Application();
@@ -89,6 +90,7 @@ public:
 	void Draw();
 	HRESULT InitWireframeView();
 	HRESULT InitSolidView();
+
 	XMFLOAT3 lightDirection;
 	XMFLOAT4 diffuseMaterial;
 	XMFLOAT4 diffuseLight;
@@ -103,5 +105,9 @@ public:
 	GameObject sphere[109];
 	Player player;
 	GameObject cube;
+	GameObject plane;
+	GameObject wall[4];
+	GameObject skybox;
+	GameObject spaceDuck;
 };
 

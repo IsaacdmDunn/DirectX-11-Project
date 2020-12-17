@@ -1,11 +1,13 @@
 ﻿  Application.cpp
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\GameObject.h(56,14): warning C4324: 'GameObject': structure was padded due to alignment specifier
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(101,14): warning C4324: 'Application': structure was padded due to alignment specifier
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(825,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(839,59): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(853,43): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(873,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(874,38): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(874,19): warning C4189: 'localTranformOffet': local variable is initialized but not referenced
-C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(873,19): warning C4189: 'rotationOffset': local variable is initialized but not referenced
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\GameObject.h(46,14): warning C4324: 'GameObject': structure was padded due to alignment specifier
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.h(103,14): warning C4324: 'Application': structure was padded due to alignment specifier
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(85,33): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(757,32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(794,63): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(809,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(823,44): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(837,34): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(838,38): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(838,19): warning C4189: 'localTranformOffet': local variable is initialized but not referenced
+C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Application.cpp(837,19): warning C4189: 'rotationOffset': local variable is initialized but not referenced
   DX11 Framework.vcxproj -> C:\Users\ganda\Documents\GitHub\DirectX-11-Project\Debug\DX11 Framework.exe

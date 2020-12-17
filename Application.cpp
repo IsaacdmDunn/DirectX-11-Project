@@ -48,14 +48,16 @@ Application::~Application()
 {
     for (int i = 0; i < 4; i++)
     {
-        delete cam[i];
-        cam[i] = nullptr;
+        delete _cam[i];
+        _cam[i] = nullptr;
     }
 	Cleanup();
 }
 
+//initialise application
 HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 {
+    //iniitalise window
     if (FAILED(InitWindow(hInstance, nCmdShow)))
 	{
         return E_FAIL;
@@ -73,51 +75,49 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         return E_FAIL;
     }
     
-	// Initialize the world matrix
+	// Initialize the game objects
     for (int i = 0; i < 108; i++)
     {
-        this->sphere[i].Init(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(5, 5, 5), _pd3dDevice, "assets/sphere.obj");
-        XMFLOAT4X4 world;
-
-        XMStoreFloat4x4(&world, XMMatrixIdentity());
-
-        _worldMatrices.push_back(world);
+        sphere[i].Init(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(5, 5, 5), _pd3dDevice, "assets/sphere.obj");
     }
-    player.Init(XMFLOAT3(0, 0, -5.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(0,0,0), _pd3dDevice, "assets/rocket.obj");
-    cube.Init(XMFLOAT3(0, 5, -5.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(0,0,0), _pd3dDevice, "assets/cube.obj");
+    for (int i = 0; i < 3; i++)
+    {
+        wall[i].Init(XMFLOAT3(10+i, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(5, 5, 5), _pd3dDevice, "assets/wall.obj");
+    }
+    player.Init(    XMFLOAT3(40, 0, -5.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(5, 5, 5), _pd3dDevice, "assets/rocket.obj");
+    plane.Init(     XMFLOAT3(40, 5, -5.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(5, 5, 5), _pd3dDevice, "assets/plane.obj");
+    spaceDuck.Init( XMFLOAT3(25, 5, 0.0f), XMFLOAT3(0, 0, 0), XMFLOAT3(.5, .5, .5), _pd3dDevice, "assets/duck.obj");
+    cube.Init(      XMFLOAT3(0, 5, -5.0f),  XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), _pd3dDevice, "assets/cube.obj");
+    skybox.Init(    XMFLOAT3(25, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), _pd3dDevice, "assets/invertedSphere.obj");
     
-    currentCam = 0;
+    //sets camera to default at 3rd person
+    _currentCam = 0;
 
-    cam[0] = new Camera();
-    cam[0]->LookAt(XMFLOAT3(0.0f, 0.0f, -5.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
-    cam[0]->UpdateViewMatrix();
+    //initialise cameras
+    //3rd person camera
+    _cam[0] = new Camera();
+    _cam[0]->LookAt(XMFLOAT3(0.0f, 0.0f, -5.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    _cam[0]->UpdateViewMatrix();
 
-    cam[1] = new Camera();
-    cam[1]->LookAt(XMFLOAT3(0.0f, 0.0f, -2.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
-    cam[1]->UpdateViewMatrix();
+    //1st person camera
+    _cam[1] = new Camera();
+    _cam[1]->LookAt(XMFLOAT3(0.0f, 0.0f, -2.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    _cam[1]->UpdateViewMatrix();
 
-    cam[2] = new Camera();
-    cam[2]->LookAt(XMFLOAT3(0.0f, 5.0f, -23.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
-    cam[2]->UpdateViewMatrix();
+    //static camera
+    _cam[2] = new Camera();
+    _cam[2]->LookAt(XMFLOAT3(0.0f, 5.0f, -23.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    _cam[2]->UpdateViewMatrix();
 
-    cam[3] = new Camera();
-    cam[3]->LookAt(XMFLOAT3(0.0f, 23.0f, 0.00000001f), XMFLOAT3(0.0f, 0.0f, 0.0f));
-    cam[3]->UpdateViewMatrix();
-    
-    
-    lightDirection = XMFLOAT3(0.25f, 0.5f, -1.0f);
-    diffuseMaterial = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-    diffuseLight = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-    ambientLight = XMFLOAT4(0.2f, 0.2f, 0.2f, 0.2f);
-    ambientMaterial = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-    specularLight = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
-    specularMaterial = XMFLOAT4(0.7f, 0.7f, 0.0f, 1.0f);
-    specularPower = 5.0;
-    eye = cam[currentCam]->GetPositionXM();
+    //top down camera
+    _cam[3] = new Camera();
+    _cam[3]->LookAt(XMFLOAT3(0.0f, 23.0f, 0.00000001f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    _cam[3]->UpdateViewMatrix();
 
 	return S_OK;
 }
 
+//initialise shaders
 HRESULT Application::InitShadersAndInputLayout()
 {
 	HRESULT hr;
@@ -160,13 +160,22 @@ HRESULT Application::InitShadersAndInputLayout()
 
     if (FAILED(hr))
         return hr;
+
+    //sets up textures for all game objects
     hr = player.AddTexture(L"assets/planets/sun_spec.dds", L"assets/planets/sun_spec.dds", hr, _pd3dDevice);
-    hr = cube.AddTexture(L"assets/cRage.dds", L"assets/cRage.dds", hr, _pd3dDevice);
+    hr = cube.AddTexture(L"assets/ChainLink.dds", L"assets/ChainLink.dds", hr, _pd3dDevice);
+    for (int i = 0; i < 3; i++)
+    {
+        hr = wall[i].AddTexture(L"assets/ChainLink.dds", L"assets/ChainLink.dds", hr, _pd3dDevice);
+    }
+    hr = plane.AddTexture(L"assets/ChainLink.dds", L"assets/ChainLink.dds", hr, _pd3dDevice);
+    hr = skybox.AddTexture(L"assets/spaceBackgound.dds", L"assets/ChainLink.dds", hr, _pd3dDevice);
+    hr = spaceDuck.AddTexture(L"assets/duck_col.dds", L"assets/duck_col.dds", hr, _pd3dDevice);
     for (int i = 0; i < 108; i++)
     {
         if (i == 0)
         {
-            hr = sphere[i].AddTexture(L"assets/planets/sun_col.dds", L"assets/planets/sun_spec.dds", hr, _pd3dDevice);
+            hr = sphere[i].AddTexture(L"assets/planets/sun_col.dds", L"assets/planets/sun_spec.dds ", hr, _pd3dDevice);
         }
         else if (i == 1)
         {
@@ -227,9 +236,9 @@ HRESULT Application::InitShadersAndInputLayout()
     // Set the input layout
     _pImmediateContext->IASetInputLayout(_pVertexLayout);
 
+    //set up blend state
     D3D11_BLEND_DESC blendDesc;
     ZeroMemory(&blendDesc, sizeof(blendDesc));
-
     D3D11_RENDER_TARGET_BLEND_DESC rtbd;
     ZeroMemory(&rtbd, sizeof(rtbd));
 
@@ -245,7 +254,8 @@ HRESULT Application::InitShadersAndInputLayout()
     blendDesc.AlphaToCoverageEnable = false;
     blendDesc.RenderTarget[0] = rtbd;
 
-    _pd3dDevice->CreateBlendState(&blendDesc, &Transparency);
+    //create blend state
+    _pd3dDevice->CreateBlendState(&blendDesc, &_transparency);
 
     D3D11_RASTERIZER_DESC cmdesc;
     ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
@@ -254,19 +264,17 @@ HRESULT Application::InitShadersAndInputLayout()
     cmdesc.CullMode = D3D11_CULL_BACK;
 
     cmdesc.FrontCounterClockwise = true;
-    hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &CCWcullMode);
-
-    cmdesc.FrontCounterClockwise = false;
-    hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &CWcullMode);
+    hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &_CCWcullMode);
 
 	return hr;
 }
 
+//initialises vertex buffer for hard coded meshes
 HRESULT Application::InitVertexBuffer()
 {
 	HRESULT hr;
 
-    // Create vertex buffer
+    //set cube vertices
     SimpleVertex cubeVertices[] =
     {
         { XMFLOAT3(-1.0,  1.0, -1.0),		XMFLOAT3(0.0,  0.0, -1.0),		XMFLOAT2(0.0, 0.0) },	
@@ -315,25 +323,7 @@ HRESULT Application::InitVertexBuffer()
         { XMFLOAT3(1.0, -1.0,  1.0),		XMFLOAT3(0.0, -1.0,  0.0),		XMFLOAT2(1.0, 1.0) },	
     };
 
-    // Create vertex buffer
-    SimpleVertex1 planeVertices[] =
-    {
-        { XMFLOAT3(-1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, //bl
-        { XMFLOAT3(1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f) }, //br
-        { XMFLOAT3(-1.0f, 0.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, //tl
-        { XMFLOAT3(1.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, //tr
-    };
-
-    // Create vertex buffer
-    SimpleVertex1 pyramidVertices[] =
-    {
-        { XMFLOAT3(-1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, //bl
-        { XMFLOAT3(1.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f) }, //br
-        { XMFLOAT3(-1.0f, 0.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, //tl
-        { XMFLOAT3(1.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, //tr
-        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }, //top
-    };
-
+    //create buffer for vertices
     D3D11_BUFFER_DESC bdCube;
 	ZeroMemory(&bdCube, sizeof(bdCube));
     bdCube.Usage = D3D11_USAGE_DEFAULT;
@@ -347,44 +337,18 @@ HRESULT Application::InitVertexBuffer()
 
     hr = _pd3dDevice->CreateBuffer(&bdCube, &InitCubeData, &_pCubeVertexBuffer);
 
-
-    D3D11_BUFFER_DESC bdPyramid;
-    ZeroMemory(&bdPyramid, sizeof(bdPyramid));
-    bdPyramid.Usage = D3D11_USAGE_DEFAULT;
-    bdPyramid.ByteWidth = sizeof(pyramidVertices);
-    bdPyramid.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bdPyramid.CPUAccessFlags = 0;
-
-    D3D11_SUBRESOURCE_DATA InitPyramidData;
-    ZeroMemory(&InitPyramidData, sizeof(InitPyramidData));
-    InitPyramidData.pSysMem = pyramidVertices;
-
-    hr = _pd3dDevice->CreateBuffer(&bdPyramid, &InitPyramidData, &_pPyramidVertexBuffer);
-
-    D3D11_BUFFER_DESC bdPlane;
-    ZeroMemory(&bdPlane, sizeof(bdPlane));
-    bdPlane.Usage = D3D11_USAGE_DEFAULT;
-    bdPlane.ByteWidth = sizeof(planeVertices);
-    bdPlane.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bdPlane.CPUAccessFlags = 0;
-
-    D3D11_SUBRESOURCE_DATA InitPlaneData;
-    ZeroMemory(&InitPlaneData, sizeof(InitPlaneData));
-    InitPlaneData.pSysMem = planeVertices;
-
-    hr = _pd3dDevice->CreateBuffer(&bdPlane, &InitPlaneData, &_pPlaneVertexBuffer);
-
     if (FAILED(hr))
         return hr;
 
 	return S_OK;
 }
 
+//initalises index buffer for hard coded meshes
 HRESULT Application::InitIndexBuffer()
 {
 	HRESULT hr;
 
-    // Create cube index buffer
+    //set cube indices
     WORD cubeIndices[] =
     {
         0,1,2 ,3,4,5,
@@ -395,24 +359,7 @@ HRESULT Application::InitIndexBuffer()
         30,31,32 ,33,34,35
     };
 
-    // Create pyramid index buffer
-    WORD pyramidIndices[] =
-    {
-        0, 1, 2,    // side 1
-        1, 3, 2,    
-        2, 0, 4,    // side 2
-        3, 2, 4,    // side 3
-        1, 3, 4,    // side 4
-        0, 1, 4,    // side 5
-    };
-
-    // Create plane index buffer
-    WORD planeIndices[] =
-    {
-        0, 1, 2,    // side 1
-        1, 3, 2,
-    };
-
+    //create buffer for indices
 	D3D11_BUFFER_DESC bdCube;
 	ZeroMemory(&bdCube, sizeof(bdCube));
 
@@ -427,39 +374,13 @@ HRESULT Application::InitIndexBuffer()
     hr = _pd3dDevice->CreateBuffer(&bdCube, &InitCubeData, &_pCubeIndexBuffer);
 
 
-    D3D11_BUFFER_DESC bdPyramid;
-    ZeroMemory(&bdPyramid, sizeof(bdPyramid));
-
-    bdPyramid.Usage = D3D11_USAGE_DEFAULT;
-    bdPyramid.ByteWidth = sizeof(pyramidIndices);
-    bdPyramid.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bdPyramid.CPUAccessFlags = 0;
-
-    D3D11_SUBRESOURCE_DATA InitData;
-    ZeroMemory(&InitData, sizeof(InitData));
-    InitData.pSysMem = pyramidIndices;
-    hr = _pd3dDevice->CreateBuffer(&bdPyramid, &InitData, &_pPyramidIndexBuffer);
-
-
-    D3D11_BUFFER_DESC bdPlane;
-    ZeroMemory(&bdPlane, sizeof(bdPlane));
-
-    bdPlane.Usage = D3D11_USAGE_DEFAULT;
-    bdPlane.ByteWidth = sizeof(planeIndices);
-    bdPlane.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bdPlane.CPUAccessFlags = 0;
-
-    //D3D11_SUBRESOURCE_DATA InitData;
-    ZeroMemory(&InitData, sizeof(InitData));
-    InitData.pSysMem = planeIndices;
-    hr = _pd3dDevice->CreateBuffer(&bdPlane, &InitData, &_pPlaneIndexBuffer);
-
     if (FAILED(hr))
         return hr;
 
 	return S_OK;
 }
 
+//initalises window to 1080x640 resolustion
 HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
     // Register class
@@ -481,9 +402,9 @@ HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
 
     // Create window
     _hInst = hInstance;
-    RECT rc = {0, 0, 640, 480};
+    RECT rc = {0, 0, 1080, 640};
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-    _hWnd = CreateWindow(L"TutorialWindowClass", L"DX11 Framework", WS_OVERLAPPEDWINDOW,
+    _hWnd = CreateWindow(L"TutorialWindowClass", L"Space Game", WS_OVERLAPPEDWINDOW,
                          CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
                          nullptr);
     if (!_hWnd)
@@ -494,6 +415,7 @@ HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
     return S_OK;
 }
 
+//gets shader from HLSL file
 HRESULT Application::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
 {
     HRESULT hr = S_OK;
@@ -526,6 +448,7 @@ HRESULT Application::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoin
     return S_OK;
 }
 
+//initialises device data
 HRESULT Application::InitDevice()
 {
     D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -624,8 +547,10 @@ HRESULT Application::InitDevice()
     vp.TopLeftY = 0;
     _pImmediateContext->RSSetViewports(1, &vp);
 
+    //initialise shaders
 	InitShadersAndInputLayout();
 
+    //initialise vertex and indices buffers
 	InitVertexBuffer();
 	InitIndexBuffer();
 
@@ -641,14 +566,13 @@ HRESULT Application::InitDevice()
 	bd.CPUAccessFlags = 0;
     hr = _pd3dDevice->CreateBuffer(&bd, nullptr, &_pConstantBuffer);
 
-    ////sets render state
-    //
-    //D3D11_RASTERIZER_DESC wfdesc;
-    //ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+    //sets render state
+    D3D11_RASTERIZER_DESC wfdesc;
+    ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 
-    //wfdesc.FillMode = D3D11_FILL_WIREFRAME;
-    //wfdesc.CullMode = D3D11_CULL_NONE;
-    //hr = _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);
+    wfdesc.FillMode = D3D11_FILL_WIREFRAME;
+    wfdesc.CullMode = D3D11_CULL_NONE;
+    hr = _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);
 
     
 
@@ -658,6 +582,7 @@ HRESULT Application::InitDevice()
     return S_OK;
 }
 
+//cleans up variables
 void Application::Cleanup()
 {
     if (_pImmediateContext) _pImmediateContext->ClearState();
@@ -665,10 +590,6 @@ void Application::Cleanup()
     if (_pConstantBuffer) _pConstantBuffer->Release();
     if (_pCubeVertexBuffer) _pCubeVertexBuffer->Release();
     if (_pCubeIndexBuffer) _pCubeIndexBuffer->Release();
-    if (_pPyramidVertexBuffer) _pPyramidVertexBuffer->Release();
-    if (_pPyramidIndexBuffer) _pPyramidIndexBuffer->Release();
-    if (_pPlaneVertexBuffer) _pPlaneVertexBuffer->Release();
-    if (_pPlaneIndexBuffer) _pPlaneIndexBuffer->Release();
     if (_pVertexLayout) _pVertexLayout->Release();
     if (_pVertexShader) _pVertexShader->Release();
     if (_pPixelShader) _pPixelShader->Release();
@@ -679,21 +600,21 @@ void Application::Cleanup()
 
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
-    Transparency->Release();
-    CCWcullMode->Release();
-    CWcullMode->Release();
+    _transparency->Release();
+    _CCWcullMode->Release();
    // if (_wireFrame) _wireFrame->Release();
    // if (_solid) _solid->Release();
 
 }
 
+//updates game
 void Application::Update()
 {
-    
-    // Update our time
     static float t = 0.0f;
-    bool speedMultipler = true;
+    bool speedMultipler = false;
     float speed = 0.3f;
+
+    //gets time passed between frames
     if (_driverType == D3D_DRIVER_TYPE_REFERENCE)
     {
         t += (float) XM_PI * 0.0125f;
@@ -708,106 +629,146 @@ void Application::Update()
 
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
     }
-    if (speedMultipler)
+
+    //if player pressed shift set sprinting to true
+    if (GetKeyState(SHIFT_PRESSED) & 0x8000)
     {
-        speed = 0.06f;
+        speedMultipler = true;
+    }
+
+    
+    //switches between the different cameras
+    //3rd person
+    if (GetKeyState('1') & 0x8000)
+    {
+        _currentCam = 0;
+    }
+    //1st person
+    else if (GetKeyState('2') & 0x8000)
+    {
+        _currentCam = 1;
+    }
+    //static view
+    else if (GetKeyState('3') & 0x8000)
+    {
+        _currentCam = 2;
+    }
+    //top down
+    else if (GetKeyState('4') & 0x8000)
+    {
+        _currentCam = 3;
+    }
+    //toggles blending mode
+    else if (GetKeyState('B') & 0x8000)
+    {
+        _blendActive = !_blendActive;
+    }
+
+    //sets speed modifier if player is sprinting
+    if (speedMultipler == true)
+    {
+        speed = 0.6f;
     }
     else
     {
         speed = 0.03f;
     }
-    if (GetKeyState('h') & 0x8000)
-    {
-        //speedMultipler = !speedMultipler;
-    }
-    if (GetKeyState('1') & 0x8000)
-    {
-        currentCam = 0;
-    }
-    else if (GetKeyState('2') & 0x8000)
-    {
-        currentCam = 1;
-    }
-    else if (GetKeyState('3') & 0x8000)
-    {
-        currentCam = 2;
-    }
-    else if (GetKeyState('4') & 0x8000)
-    {
-        currentCam = 3;
-    }
-    else if (GetKeyState('B') & 0x8000)
-    {
-        blendActive = !blendActive;
-    }
+
+    //move player/cams forwards
     if (GetKeyState('W') & 0x8000)
     {
-        cam[0]->Walk(speed);
-        cam[1]->Walk(speed);
-        cam[3]->Fly(-speed);
+        _cam[0]->Walk(speed);
+        _cam[1]->Walk(speed);
+        _cam[3]->Fly(-speed);
         
     }
+    //move player/cams backwards
     else if (GetKeyState('S') & 0x8000)
     {
-        cam[0]->Walk(-speed);
-        cam[1]->Walk(-speed);
-        cam[3]->Fly(speed);
+        _cam[0]->Walk(-speed);
+        _cam[1]->Walk(-speed);
+        _cam[3]->Fly(speed);
     }
+    //move player/cams left
     if (GetKeyState('A') & 0x8000)
     {
-        cam[0]->Strafe(-speed);
-        cam[1]->Strafe(-speed);
-        cam[3]->Strafe(speed);
+        _cam[0]->Strafe(-speed);
+        _cam[1]->Strafe(-speed);
+        _cam[3]->Strafe(speed);
     }
+    //move player/cams right
     else if (GetKeyState('D') & 0x8000)
     {
-        cam[0]->Strafe(speed);
-        cam[1]->Strafe(speed);
-        cam[3]->Strafe(-speed);
+        _cam[0]->Strafe(speed);
+        _cam[1]->Strafe(speed);
+        _cam[3]->Strafe(-speed);
         
     }
+    //rotate player/cams left
     else if (GetKeyState('Q') & 0x8000)
     {
-        cam[0]->RotateY(-.02f);
-        cam[1]->RotateY(-.02f);
-        cam[3]->RotateY(-.02f);
+        _cam[0]->RotateY(-.02f);
+        _cam[1]->RotateY(-.02f);
+        _cam[3]->RotateY(-.02f);
         player.RotatePlayer(0, -0.02f, 0);
     }
+    //rotate player/cams right
     else if (GetKeyState('E') & 0x8000)
     {
-        cam[0]->RotateY(.02f);
-        cam[1]->RotateY(.02f);
-        cam[3]->RotateY(.02f);
+        _cam[0]->RotateY(.02f);
+        _cam[1]->RotateY(.02f);
+        _cam[3]->RotateY(.02f);
         player.RotatePlayer(0, 0.02f, 0);
 
     }
-    //cam[][0]->SetLens(0.25f * 3.1452, _WindowWidth / _WindowHeight, 1.0f, 1000.0f);
 
-    //
-    
-    //cam[]->LookAt(XMFLOAT3(0, 0, 0), XMFLOAT3(cam[]->GetPosition().x, cam[]->GetPosition().y - 1, cam[]->GetPosition().z + 15), XMFLOAT3(0.0f, 0.0f, 0.0f));
-    cam[currentCam]->UpdateViewMatrix();
+    //updates view based on which camera is active
+    _cam[_currentCam]->UpdateViewMatrix();
 
-    gTime = t / 30;
+    //sets up time speed
+    _gTime = t / 30;
 
+    //update player
     player.SetScale(.05, .05, .05);
-    player.SetRotation(0, player.GetPlayerRotation().y, 0, 0, cam[0]->GetLook().y, 0);
-    player.SetPosition(0, -.2, 2.5, cam[0]->GetPosition().x, cam[0]->GetPosition().y, cam[0]->GetPosition().z);
+    player.SetRotation(0, player.GetPlayerRotation().y, 0, 0, _cam[0]->GetLook().y, 0);
+    player.SetPosition(0, -.2, 2.5, _cam[0]->GetPosition().x, _cam[0]->GetPosition().y, _cam[0]->GetPosition().z);
     player.Update();
 
-    
+    //update cube
+    cube.SetRotation(_gTime, _gTime, _gTime, 0, 0, 0);
+    cube.SetPosition(0, 0, -5, 0, 0, 0);
+    cube.Update();
+
+    //update skybox
+    skybox.SetScale(50, 50, 50);
+    skybox.SetRotation(0, 0, 0, 0, 0, 0);
+    skybox.SetPosition(0, 0, 0, 0, 0, 0);
+    skybox.Update();
+
+    //update duck
+    spaceDuck.SetRotation(0, 0, 0, 0, 0, 0);
+    spaceDuck.SetPosition(5, 0, 5, 0, 0, 0);
+    spaceDuck.Update();
+
+    for (int i = 0; i < 3; i++)
+    {
+        wall[i].SetScale(2, 2, 2);
+        wall[i].SetRotation(0, 0, 0, 0, 0, 0);
+        wall[i].SetPosition(10 + i, 0, 0, 0, 0, 0);
+        wall[i].Update();
+    }
+    plane.SetScale(2, 2, 2);
+    plane.SetRotation(0, 0, 0, 0, 0, 0);
+    plane.SetPosition(10, -1.5f, 0, 0, 0, 0);
+    plane.Update();
 
     for (int i = 0; i < 108; i++)
     {
-        cube.SetScale(1, 1, 1);
-        cube.SetRotation(gTime, gTime, gTime, 0, 0, 0);
-        cube.SetPosition(0, 0, -5, 0, 0, 0);
-        cube.Update();
         if (i == 0)
         {
             //sun
             sphere[i].SetScale(2, 2, 2);
-            sphere[i].SetRotation(0, gTime, 0, 0, 0, 0);
+            sphere[i].SetRotation(0, _gTime, 0, 0, 0, 0);
             sphere[i].SetPosition(0, 0, 0, 0, 0, 0);
             sphere[i].Update();
         }
@@ -815,105 +776,115 @@ void Application::Update()
         {
             //earth
             sphere[i].SetScale(.65, .65, .65);
-            sphere[i].SetRotation(0, gTime, 180, 0, gTime, 0);
+            sphere[i].SetRotation(0, _gTime, 180, 0, _gTime, 0);
             sphere[i].SetPosition(0, 0, 0, 0, 0, 9);
+            sphere[i].Update();
+        }
+        //other planets
+        else if (i == 8)
+        {
+            sphere[i].SetScale(.8, .8, .8);
+            sphere[i].SetRotation(0, _gTime / 3, 0, 0, _gTime / 3, 0);
+            sphere[i].SetPosition(0, 0, 0, 0, 0, 22);
             sphere[i].Update();
         }
         else if (i == 2)
         {
             sphere[i].SetScale(.4, .4, .4);
-            sphere[i].SetRotation(0, gTime * 2, 0, 0, gTime * 1.5, 0);
+            sphere[i].SetRotation(0, _gTime * 2, 0, 0, _gTime * 1.5, 0);
             sphere[i].SetPosition(0, 0, 0, 0, 0, 6);
             sphere[i].Update();
         }
         else if (i == 3)
         {
             sphere[i].SetScale(1, 1, 1);
-            sphere[i].SetRotation(0, gTime/2, 0, 0, gTime / 2, 0);
+            sphere[i].SetRotation(0, _gTime/2, 0, 0, _gTime / 2, 0);
             sphere[i].SetPosition(0, 0, 0, 0, 0, 16);
             sphere[i].Update();
         }
+        //moons
         else if (i == 4)
         {
             sphere[i].SetScale(.2, .2, .2);
-            sphere[i].SetRotation(0, gTime*3, 0, 0, gTime * 1.5, 0);
+            sphere[i].SetRotation(0, _gTime*3, 0, 0, _gTime * 1.5, 0);
             sphere[i].SetPosition(0, 0, 2, 0, 0, 6);
             sphere[i].Update();
         }
         else if (i == 5)
         {
             sphere[i].SetScale(.25, .25, .25);
-            sphere[i].SetRotation(0, gTime*3, 0, 0, gTime, 0);
+            sphere[i].SetRotation(0, _gTime*3, 0, 0, _gTime, 0);
             sphere[i].SetPosition(0, 0, 2, 0, 0, 9);
             sphere[i].Update();
         }
         else if (i == 6)
         {
             sphere[i].SetScale(.4, .4, .4);
-            sphere[i].SetRotation(0, gTime*1.5, 0, 0, gTime/2, 0);
+            sphere[i].SetRotation(0, _gTime*1.5, 0, 0, _gTime/2, 0);
             sphere[i].SetPosition(0, 0, 4, 0, 0, 16);
             sphere[i].Update();
         }
         else if (i == 7)
         {
             sphere[i].SetScale(.1, .1, .1);
-            sphere[i].SetRotation(0, gTime*5, 0, 0, gTime/2, 0);
+            sphere[i].SetRotation(0, _gTime*5, 0, 0, _gTime/2, 0);
             sphere[i].SetPosition(0, 0, 2.5, 0, 0, 16);
             sphere[i].Update();
         }
-        else if (i == 8)
-        {
-            sphere[i].SetScale(.8, .8, .8);
-            sphere[i].SetRotation(0, gTime/3, 0, 0, gTime / 3, 0);
-            sphere[i].SetPosition(0, 0, 0, 0, 0, 22);
-            sphere[i].Update();
-        }
+        
         else
         {
             float rotationOffset = rand() % 100;
             float localTranformOffet = (rand() % 30) / 10;
             
             sphere[i].SetScale(.05, .05, .05);
-            sphere[i].SetRotation(0, gTime + (i/2), 0, 0, gTime/3, 0);
+            sphere[i].SetRotation(0, _gTime + (i/2), 0, 0, _gTime/3, 0);
             sphere[i].SetPosition(0, 0, 3 , 0, 0, 22);
             sphere[i].Update();
         }
     }
 }
 
+//draws objects
 void Application::Draw()
 {
-    
-    //
     // Clear the back buffer
-    //
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; // red,green,blue,alpha
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);
     
-    player.Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
-    cube.Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    //draw game objects
+    player.Draw(_cam[_currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    cube.Draw(_cam[_currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    skybox.Draw(_cam[_currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    spaceDuck.Draw(_cam[_currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    plane.Draw(_cam[_currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    
+    //draw walls
+    for (int i = 0; i < 3; i++) {
+        this->wall[i].Draw(_cam[_currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+    }
+    //draw spheres
     for (int i = 0; i < 108; i++)
     {
-
-        if (blendActive == true)
+        //blend mode active
+        if (_blendActive == true)
         {
             float blendFactor[] = { 1.0f, 0.75f, 0.75f, 1.0f };
-            _pImmediateContext->OMSetBlendState(Transparency, blendFactor, 0xffffffff);
+            _pImmediateContext->OMSetBlendState(_transparency, blendFactor, 0xffffffff);
         }
         
-        sphere[i].Draw(cam[currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
+        sphere[i].Draw(_cam[_currentCam], _pImmediateContext, _pConstantBuffer, _pVertexShader, _pPixelShader, _pSamplerLinear);
     }
-    _pImmediateContext->OMSetBlendState(0, 0, 0xffffffff);
 
+    _pImmediateContext->OMSetBlendState(0, 0, 0xffffffff);
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    //
     // Present our back buffer to our front buffer
-    //
     _pSwapChain->Present(0, 0);
 
 }
 
+//initialises wire frame mode
 HRESULT Application::InitWireframeView()
 {
     D3D11_RASTERIZER_DESC wfdesc;
@@ -923,6 +894,7 @@ HRESULT Application::InitWireframeView()
     return _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);
 }
 
+//initialises solid mode
 HRESULT Application::InitSolidView()
 {
     D3D11_RASTERIZER_DESC sodesc;
